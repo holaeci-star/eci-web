@@ -39,7 +39,7 @@ const BASE = (process.env.NEXT_PUBLIC_MEDIA_BASE ?? "").replace(/\/$/, "");
 
    La regla es el primer segmento de la ruta: lo que empiece con alguno
    de estos prefijos va a R2; todo lo demás se queda local. */
-const REMOTOS = ["/01_REELS/", "/hero/"];
+const REMOTOS = ["/01_REELS/", "/02_ANIMACIONES/", "/hero/"];
 
 const esRemoto = (src: string) => REMOTOS.some((p) => src.startsWith(p));
 

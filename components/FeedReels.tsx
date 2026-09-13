@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import Placeholder from "./Placeholder";
 import { listar, reels, type Pieza } from "@/lib/content";
 import { urlMedia } from "@/lib/media";
@@ -29,6 +30,13 @@ const FRANJA = {
 };
 
 export default function FeedReels({ inicial }: { inicial?: string }) {
+  /* A dónde regresa el botón de cerrar. Quien abrió el reel manda la
+     ruta con el filtro que tenía puesto; si nadie la manda, se vuelve
+     al listado de trabajo, que es el menú donde se puede cambiar de
+     sección. */
+  const params = useSearchParams();
+  const regreso = params.get("volver") ?? "/trabajo";
+
   const contenedor = useRef<HTMLDivElement>(null);
   const slides = useRef<(HTMLDivElement | null)[]>([]);
   const videos = useRef<(HTMLVideoElement | null)[]>([]);
@@ -171,6 +179,7 @@ export default function FeedReels({ inicial }: { inicial?: string }) {
       {/* ── UNA sola capa de interfaz, fija ── */}
       <Interfaz
         pieza={pieza}
+        regreso={regreso}
         indice={activo}
         total={LISTA.length}
         sonido={sonido}
@@ -208,9 +217,9 @@ function GuiaZonaSegura() {
 }
 
 function Interfaz({
-  pieza, indice, total, sonido, guia, onSonido, onGuia,
+  pieza, regreso, indice, total, sonido, guia, onSonido, onGuia,
 }: {
-  pieza?: Pieza; indice: number; total: number;
+  pieza?: Pieza; regreso: string; indice: number; total: number;
   sonido: boolean; guia: boolean;
   onSonido: () => void; onGuia: () => void;
 }) {
@@ -220,10 +229,10 @@ function Interfaz({
       {/* Superior */}
       <div className="pointer-events-none absolute inset-x-0 top-0 z-30 flex items-start justify-between p-4 md:p-6">
         <Link
-          href="/reels"
+          href={regreso}
           className="pointer-events-auto rounded-full bg-[color-mix(in_srgb,#111827_70%,transparent)] px-4 py-2 text-sm text-[var(--color-crema)] backdrop-blur-md hover:bg-[var(--color-crema)] hover:text-[var(--color-profundo)] transition-colors"
         >
-          ← Todos los reels
+          ← Volver
         </Link>
         <div className="pointer-events-auto flex gap-2">
           <button

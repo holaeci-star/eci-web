@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import FeedReels from "@/components/FeedReels";
 import { reels } from "@/lib/content";
 
@@ -11,5 +12,9 @@ export default async function ReelPorSlug({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  return <FeedReels inicial={slug} />;
+  return (
+    <Suspense>
+      <FeedReels inicial={slug} />
+    </Suspense>
+  );
 }

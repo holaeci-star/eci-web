@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import RejillaReels from "@/components/RejillaReels";
 
 export const metadata = {
@@ -21,7 +22,9 @@ export default function Reels() {
       </p>
 
       <div className="mt-10">
-        <RejillaReels />
+        <Suspense>
+          <RejillaReels />
+        </Suspense>
       </div>
     </section>
   );

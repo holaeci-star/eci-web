@@ -1,28 +1,55 @@
 import Link from "next/link";
 import Placeholder from "@/components/Placeholder";
 import HeroReel from "@/components/HeroReel";
+import TarjetaTrabajo from "@/components/TarjetaTrabajo";
 import { SITIO, SERVICIOS } from "@/lib/sitio";
-import { LOGOS_CLIENTE, visibles } from "@/lib/content";
+import { LOGOS_CLIENTE, visibles, type Formato } from "@/lib/content";
 import { urlMedia } from "@/lib/media";
 
-const PILARES = [
-  { id: "reels", titulo: "Contenido vertical", texto: "El motor de volumen. Una jornada de grabación, ocho a diez piezas.", formato: "vertical" as const, href: "/reels" },
-  { id: "comercial", titulo: "Audiovisual comercial", texto: "Formato cine, con guion y storyboard aprobados antes de producir.", formato: "horizontal" as const, href: "/trabajo" },
-  { id: "marca", titulo: "Identidad de marca", texto: "Desde el arranque exprés hasta el sistema completo con manual.", formato: "estatico" as const, href: "/trabajo" },
+/* Los tres servicios que el estudio ofrece hoy. El audiovisual
+   comercial sale de aquí junto con su rubro: no se anuncia lo que no
+   se está tomando. */
+const PILARES: { id: string; titulo: string; texto: string; formato: Formato; href: string }[] = [
+  { id: "reels", titulo: "Contenido vertical", texto: "El motor de volumen. Una jornada de grabación, ocho a diez piezas.", formato: "vertical", href: "/reels" },
+  { id: "marca", titulo: "Identidad de marca", texto: "Desde el arranque exprés hasta el sistema completo con manual.", formato: "estatico", href: "/trabajo?seccion=marca" },
+  { id: "foto", titulo: "Fotografía", texto: "Producto, espacio y equipo, con la luz resuelta desde el set y no en la edición.", formato: "estatico", href: "/trabajo?seccion=foto" },
 ];
 
 export default function Home() {
   const publicables = visibles();
-  const destacados = publicables.filter((p) => p.destacado).slice(0, 4);
+  /* La selección enseña cuatro reels con la misma tarjeta del listado
+     de Trabajo: portada quieta que se reproduce al pasar el cursor.
+     Es la interacción que ya existe, no una versión aparte. */
+  const destacados = publicables
+    .filter((p) => p.rubro === "reels" && p.destacado)
+    .slice(0, 4);
   const clientes = [...new Set(publicables.map((p) => p.cliente))];
-  // El hero rota entre varios reels, cinco segundos cada uno. Se
-  // ordenan del más ligero al más pesado: los primeros son los que
-  // alcanza a ver quien solo pasa por la home.
-  const heroClips = publicables
-    .filter((p) => p.formato === "vertical" && p.media.tipo === "local")
-    .map((p) => ({ p, m: p.media as { src: string; pesoMB: number } }))
-    .sort((a, b) => a.m.pesoMB - b.m.pesoMB)
-    .slice(0, 6)
+  /* El hero rota entre seis reels, cinco segundos cada uno, mezclando
+     grabado y animación: dos grabados, un animado, y otra vez. Así
+     quien solo pasa por la home ve de una que el estudio hace las dos
+     cosas, sin tener que entrar a ningún lado.
+
+     Dentro de cada grupo van del más ligero al más pesado: los
+     primeros son los únicos que alcanza a ver quien no se queda. */
+  const porPeso = (t: "live-action" | "animacion") =>
+    publicables
+      .filter(
+        (p) =>
+          p.rubro === "reels" &&
+          p.media.tipo === "local" &&
+          (p.tecnica ?? "live-action") === t
+      )
+      .map((p) => ({ p, m: p.media as { src: string; pesoMB: number } }))
+      .sort((a, b) => a.m.pesoMB - b.m.pesoMB);
+
+  const grabados = porPeso("live-action");
+  const animados = porPeso("animacion");
+
+  const heroClips = [
+    grabados[0], grabados[1], animados[0],
+    grabados[2], grabados[3], animados[1],
+  ]
+    .filter(Boolean)
     .map(({ p, m }) => ({
       slug: p.slug,
       cliente: p.cliente,
@@ -107,24 +134,7 @@ export default function Home() {
         </div>
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4 items-start">
           {destacados.map((p) => (
-            <Link
-              key={p.slug}
-              href={p.rubro === "reels" ? `/reels/${p.slug}` : `/trabajo/${p.slug}`}
-              className="group"
-            >
-              <div
-                className="overflow-hidden rounded-xl border border-[var(--color-borde)]"
-                style={{ aspectRatio: p.formato === "vertical" ? "9 / 16" : p.formato === "horizontal" ? "16 / 9" : "4 / 3" }}
-              >
-                <Placeholder formato={p.formato} compacto />
-              </div>
-              <p className="mt-3 text-[10px] uppercase tracking-[0.16em] text-[var(--color-menta)]">
-                {p.cliente}
-              </p>
-              <h3 className="display-suave text-base text-[var(--color-crema)] group-hover:text-[var(--color-menta)] transition-colors">
-                {p.titulo}
-              </h3>
-            </Link>
+            <TarjetaTrabajo key={p.slug} p={p} />
           ))}
         </div>
       </section>

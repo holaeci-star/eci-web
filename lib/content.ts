@@ -32,6 +32,11 @@ export type Formato = "vertical" | "horizontal" | "estatico";
    distinto y quien busca uno rara vez quiere el otro. */
 export type Tecnica = "live-action" | "animacion";
 
+export const TECNICAS: { id: Tecnica; nombre: string }[] = [
+  { id: "live-action", nombre: "Live action" },
+  { id: "animacion", nombre: "Animación" },
+];
+
 export type Metrica = { valor: string; etiqueta: string };
 
 /* Quién trabajó en la pieza. Va al final del caso de estudio.
@@ -183,9 +188,17 @@ export const RUBROS: { id: Rubro; nombre: string; corto: string }[] = [
    botón "Marca" y por dentro se filtran entre ellas.
 
    Donde una sección cubre un solo rubro no aparece filtro interno. */
-export const SECCIONES: { id: string; corto: string; rubros: Rubro[] }[] = [
+export const SECCIONES: {
+  id: string;
+  corto: string;
+  rubros: Rubro[];
+  /* Reels se subdivide por cómo se hizo la pieza, no por rubro: son
+     todas el mismo servicio, pero grabar y animar son oficios
+     distintos y quien busca uno rara vez quiere el otro. */
+  porTecnica?: boolean;
+}[] = [
   { id: "marca", corto: "Marca", rubros: ["marca", "marca-express"] },
-  { id: "reels", corto: "Reels", rubros: ["reels"] },
+  { id: "reels", corto: "Reels", rubros: ["reels"], porTecnica: true },
   { id: "comercial", corto: "Comercial", rubros: ["comercial"] },
   { id: "foto", corto: "Foto", rubros: ["foto"] },
   { id: "diseno", corto: "Diseño", rubros: ["diseno"] },

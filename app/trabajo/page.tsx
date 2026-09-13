@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Rejilla from "@/components/Rejilla";
 
 export const metadata = { title: "Trabajo" };
@@ -12,7 +13,9 @@ export default function Trabajo() {
         los tamaños antes de exportar el material real.
       </p>
       <div className="mt-10">
-        <Rejilla />
+        <Suspense>
+          <Rejilla />
+        </Suspense>
       </div>
     </section>
   );

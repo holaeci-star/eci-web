@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import Placeholder from "./Placeholder";
@@ -25,9 +26,9 @@ const TECNICAS: { id: Tecnica | "todos"; nombre: string }[] = [
   { id: "animacion", nombre: "Animación" },
 ];
 
-function Tarjeta({ p }: { p: Pieza }) {
+function Tarjeta({ p, volver }: { p: Pieza; volver: string }) {
   return (
-    <Link href={`/reels/${p.slug}`} className="group block">
+    <Link href={`/reels/${p.slug}?volver=${volver}`} className="group block">
       <div
         className="relative overflow-hidden rounded-xl border border-[var(--color-borde)] bg-[var(--color-superficie)]"
         style={{ aspectRatio: "9 / 16" }}
@@ -76,8 +77,16 @@ function Tarjeta({ p }: { p: Pieza }) {
 }
 
 export default function RejillaReels() {
-  const [tecnica, setTecnica] = useState<Tecnica | "todos">("todos");
+  const params = useSearchParams();
+  const [tecnica, setTecnica] = useState<Tecnica | "todos">(
+    (params.get("tecnica") as Tecnica) ?? "todos"
+  );
   const todos = useMemo(() => reels(), []);
+
+  /* Cada tarjeta se lleva a dónde volver, con el filtro puesto */
+  const volver = encodeURIComponent(
+    `/reels${tecnica !== "todos" ? `?tecnica=${tecnica}` : ""}`
+  );
 
   const lista = useMemo(
     () =>
@@ -112,10 +121,12 @@ export default function RejillaReels() {
 
       <div
         key={tecnica}
-        className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-4 xl:grid-cols-5 [animation:aparecer_.4s_var(--ease-eci)]"
+        /* Cuatro columnas fijas de tablet en adelante: con cinco, la
+           última fila quedaba coja y la cuadrícula se leía rota. */
+        className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4 [animation:aparecer_.4s_var(--ease-eci)]"
       >
         {lista.map((p) => (
-          <Tarjeta key={p.slug} p={p} />
+          <Tarjeta key={p.slug} p={p} volver={volver} />
         ))}
       </div>
     </>
