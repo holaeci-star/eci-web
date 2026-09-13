@@ -27,6 +27,11 @@ export type Rubro =
 
 export type Formato = "vertical" | "horizontal" | "estatico";
 
+/* Cómo se hizo la pieza. Solo aplica a los reels, y es lo que separa
+   las dos listas del feed: un reel de animación y uno grabado se ven
+   distinto y quien busca uno rara vez quiere el otro. */
+export type Tecnica = "live-action" | "animacion";
+
 export type Metrica = { valor: string; etiqueta: string };
 
 /* Quién trabajó en la pieza. Va al final del caso de estudio.
@@ -109,6 +114,8 @@ export type Pieza = {
       Si existe, manda sobre `tarjetaHover`, que queda de póster. */
   tarjetaHoverVideo?: string;
   campana?: string;
+  /* Solo en reels. Si falta, se asume imagen real. */
+  tecnica?: Tecnica;
   /* Agencias a través de las cuales se produjo la pieza.
 
      El cliente sigue siendo la marca —el trabajo se hizo para ella— y
@@ -159,13 +166,30 @@ export const listar = (xs: string[]): string =>
     : xs.slice(0, -1).join(", ") + " y " + xs[xs.length - 1];
 
 export const RUBROS: { id: Rubro; nombre: string; corto: string }[] = [
-  { id: "marca", nombre: "Identidad completa", corto: "Marca" },
+  { id: "marca", nombre: "Identidad completa", corto: "Completa" },
   { id: "marca-express", nombre: "Identidad exprés", corto: "Exprés" },
   { id: "reels", nombre: "Contenido vertical", corto: "Reels" },
   { id: "comercial", nombre: "Audiovisual comercial", corto: "Comercial" },
   { id: "foto", nombre: "Fotografía", corto: "Foto" },
   { id: "diseno", nombre: "Diseño gráfico", corto: "Diseño" },
   { id: "web", nombre: "Desarrollo web", corto: "Web" },
+];
+
+/* ── Secciones de la rejilla ──
+
+   Un botón puede cubrir más de un rubro. La identidad completa y la
+   exprés son el mismo servicio en dos tamaños, y separarlas en dos
+   botones partía una sección que ya era corta: ahora comparten el
+   botón "Marca" y por dentro se filtran entre ellas.
+
+   Donde una sección cubre un solo rubro no aparece filtro interno. */
+export const SECCIONES: { id: string; corto: string; rubros: Rubro[] }[] = [
+  { id: "marca", corto: "Marca", rubros: ["marca", "marca-express"] },
+  { id: "reels", corto: "Reels", rubros: ["reels"] },
+  { id: "comercial", corto: "Comercial", rubros: ["comercial"] },
+  { id: "foto", corto: "Foto", rubros: ["foto"] },
+  { id: "diseno", corto: "Diseño", rubros: ["diseno"] },
+  { id: "web", corto: "Web", rubros: ["web"] },
 ];
 
 /* Medidas del manual — se dibujan sobre cada placeholder para poder
@@ -177,167 +201,107 @@ export const MEDIDAS: Record<Formato, { w: number; h: number }> = {
 };
 
 export const PIEZAS: Pieza[] = [
-  /* ─── REELS · Desvelados — tres piezas de una misma campaña ─── */
+  /* ═══════════════════════════════════════════════════════════════
+     REELS · diecisiete piezas, once grabadas y seis animadas
+
+     El feed las mezcla todas; el filtro de arriba separa por técnica,
+     que es la división que de verdad le importa a quien busca —un
+     reel de animación y uno grabado son oficios distintos—.
+
+     Los archivos viven en Cloudflare R2, no en el repositorio:
+     01_REELS para lo grabado, 02_ANIMACIONES para lo animado. Aquí
+     solo viaja la ruta. Las portadas sí son del repositorio y pesan
+     unos 100 KB cada una.
+     ═══════════════════════════════════════════════════════════════ */
+  {
+    slug: "desvelados-otono-pumpkin-spice",
+    titulo: "Pumpkin Spice Latte",
+    cliente: "Desvelados",
+    clienteId: "03_DESVELADOS",
+    categoria: "Cafetería de especialidad",
+    campana: "Otoño 2025",
+    rubro: "reels",
+    tecnica: "live-action",
+    formato: "vertical",
+    anio: 2025,
+    resumen: "Presentación para bebida de temporada en octubre. Primera de tres piezas.",
+    tarjeta: "/reels/desvelados-otono-pumpkin-spice.jpg",
+    descripcion: [],
+    servicios: ["contenido-vertical"],
+    metricas: [],
+    colaboradores: [{"nombre":"Omar Terrazas","rol":"Colorización"}],
+    destacado: true,
+    orden: 1,
+    media: { tipo: "local", src: "/01_REELS/2025_Desvelados_PumkingSpicen.mp4", pesoMB: 17.9 },
+    galeria: 0,
+    demo: false,
+  },
   {
     slug: "desvelados-otono-thai-latte",
     titulo: "Thai Latte",
     cliente: "Desvelados",
-    clienteId: "31_DESVELADOS",
+    clienteId: "03_DESVELADOS",
     categoria: "Cafetería de especialidad",
-    campana: "otono-2025",
+    campana: "Otoño 2025",
     rubro: "reels",
+    tecnica: "live-action",
     formato: "vertical",
     anio: 2025,
-    resumen: "La bebida de temporada contada en el tiempo que tarda en servirse.",
-    descripcion: [
-      "Desvelados abre temporada de otoño con tres bebidas nuevas y necesita que se entiendan en redes antes de que alguien pise la cafetería. El reto no era mostrar el producto: era que se antojara en los primeros dos segundos, antes de que el pulgar siguiera de largo.",
-      "Grabamos las tres bebidas en una sola sesión de medio día, aprovechando la luz natural del local a media mañana. El montaje sigue el ritmo del proceso —vertido, vapor, primer sorbo— sin locución, apoyado solo en diseño sonoro.",
-    ],
+    resumen: "Proceso con el tiempo justo para querer pedir uno. Segunda de tres piezas.",
+    tarjeta: "/reels/desvelados-otono-thai-latte.jpg",
+    descripcion: [],
     servicios: ["contenido-vertical"],
-    metricas: [
-      { valor: "3 piezas", etiqueta: "en una sola sesión" },
-      { valor: "1/2 día", etiqueta: "de grabación" },
-    ],
+    metricas: [],
+    colaboradores: [{"nombre":"Omar Terrazas","rol":"Colorización"}],
     destacado: true,
-    orden: 1,
-    media: { tipo: "local", src: "/01_REELS/2025-Desvelados_Thai Latte.mp4", pesoMB: 11.4 },
-    galeria: 0,
-    demo: true,
-  },
-  {
-    slug: "desvelados-otono-pumpkin-spice",
-    titulo: "Pumpkin Spice",
-    cliente: "Desvelados",
-    clienteId: "31_DESVELADOS",
-    categoria: "Cafetería de especialidad",
-    campana: "otono-2025",
-    rubro: "reels",
-    formato: "vertical",
-    anio: 2025,
-    resumen: "El clásico de temporada, sin el cliché de temporada.",
-    descripcion: [
-      "Segunda pieza de la campaña de otoño. La instrucción de dirección de arte fue evitar todo el repertorio visual gastado del pumpkin spice —hojas secas, suéteres, luz naranja— y quedarse en el producto y las manos.",
-    ],
-    servicios: ["contenido-vertical"],
-    metricas: [{ valor: "18 s", etiqueta: "de duración" }],
-    destacado: false,
     orden: 2,
-    media: { tipo: "local", src: "/01_REELS/2025_Desvelados_PumkingSpicen.mp4", pesoMB: 18.7 },
+    media: { tipo: "local", src: "/01_REELS/2025-Desvelados_Thai Latte.mp4", pesoMB: 10.9 },
     galeria: 0,
-    demo: true,
+    demo: false,
   },
   {
-    slug: "desvelados-que-le-puedo-ofrecer",
-    titulo: "¿Qué le puedo ofrecer?",
+    slug: "desvelados-acercamiento-preparacion",
+    titulo: "Acercamiento y preparación",
     cliente: "Desvelados",
-    clienteId: "31_DESVELADOS",
+    clienteId: "03_DESVELADOS",
     categoria: "Cafetería de especialidad",
-    campana: "otono-2025",
+    campana: "Otoño 2025",
     rubro: "reels",
+    tecnica: "live-action",
     formato: "vertical",
     anio: 2025,
-    resumen: "La pregunta de barra convertida en gancho de apertura.",
-    descripcion: [
-      "Cierra la campaña de otoño. La frase que el barista dice cien veces al día abre el video, y el resto de la pieza son las respuestas posibles: cada bebida de la temporada en un corte.",
-    ],
+    resumen: "Cómo se siente la preparación. Tercera de tres piezas.",
+    tarjeta: "/reels/desvelados-acercamiento-preparacion.jpg",
+    descripcion: [],
     servicios: ["contenido-vertical"],
-    metricas: [{ valor: "3ª pieza", etiqueta: "de la campaña de otoño" }],
+    metricas: [],
+    colaboradores: [{"nombre":"Omar Terrazas","rol":"Colorización"}],
     destacado: false,
     orden: 3,
-    media: { tipo: "local", src: "/01_REELS/2025-Desvelados-Que-Le-Puedo-Ofrecer.mp4", pesoMB: 14.4 },
+    media: { tipo: "local", src: "/01_REELS/2025-Desvelados-Que-Le-Puedo-Ofrecer.mp4", pesoMB: 13.8 },
     galeria: 0,
-    demo: true,
+    demo: false,
   },
-
-  /* ─── REELS · otros clientes, para demostrar rango ───
-     Reexportados y servidos desde R2. */
   {
     slug: "bricka-landmark-departamento-1404",
-    titulo: "Departamento 1404",
+    titulo: "Landmark Reserve Dep.1404",
     cliente: "BRICKA",
     clienteId: "04_BRICKA",
     categoria: "Bienes raíces",
     rubro: "reels",
+    tecnica: "live-action",
     formato: "vertical",
     anio: 2026,
-    resumen: "Un recorrido por el departamento 1404 de Landmark que se entiende sin narración.",
-    descripcion: [
-      "Bienes raíces en formato vertical tiene un problema propio: el recorrido tradicional es horizontal y aburrido. Aquí la cámara sigue el trayecto que haría alguien que llega a vivir, no el que haría un inspector.",
-      "Los gráficos en pantalla sustituyen a la locución: metros cuadrados, recámaras y amenidades aparecen cuando el espacio correspondiente está a cuadro.",
-    ],
+    resumen: "¿Cómo se sentiría vivir en una de las torres más exclusivas de Guadalajara?",
+    tarjeta: "/reels/bricka-landmark-departamento-1404.jpg",
+    descripcion: [],
     servicios: ["contenido-vertical"],
-    metricas: [
-      { valor: "1404", etiqueta: "piso 14, unidad 04" },
-      { valor: "0", etiqueta: "palabras de locución" },
-    ],
+    metricas: [],
     destacado: true,
     orden: 4,
-    media: { tipo: "local", src: "/01_REELS/2026-BRICKA-Landmark-Departamento-140.mp4", pesoMB: 16.2 },
+    media: { tipo: "local", src: "/01_REELS/2026-BRICKA-Landmark-Departamento-140.mp4", pesoMB: 15.4 },
     galeria: 0,
-    demo: true,
-  },
-  /* ── Estas dos piezas llevan TEXTO GENÉRICO a propósito ──
-     Están para poder ver el feed completo mientras llega el documento
-     maestro con los textos reales. No son propuesta de redacción. */
-  {
-    slug: "shiny-servicios",
-    titulo: "Servicios",
-    cliente: "Shiny",
-    clienteId: "14_SHINY",
-    categoria: "Limpieza de calzado",
-    rubro: "reels",
-    formato: "vertical",
-    anio: 2025,
-    resumen: "Pieza de contenido vertical. Texto pendiente del documento maestro.",
-    descripcion: [],
-    servicios: ["contenido-vertical"],
-    metricas: [],
-    destacado: false,
-    orden: 5,
-    media: { tipo: "local", src: "/01_REELS/2025-Shiny-Servicios.mp4", pesoMB: 19.2 },
-    galeria: 0,
-    demo: true,
-  },
-  {
-    slug: "espolon-rollforcocktail",
-    titulo: "Roll for Cocktail",
-    cliente: "Espolón Tequila",
-    clienteId: "08_ESPOLON_TEQUILA",
-    categoria: "Destilados",
-    /* La marca nos llegó por agencia: el trabajo es para Espolón, y
-       Diptongo y NewGen son quienes lo encargaron. */
-    agencias: ["Diptongo", "NewGen"],
-    rubro: "reels",
-    formato: "vertical",
-    anio: 2026,
-    resumen: "Pieza de contenido vertical. Texto pendiente del documento maestro.",
-    descripcion: [],
-    servicios: ["contenido-vertical"],
-    metricas: [],
-    destacado: false,
-    orden: 6,
-    media: { tipo: "local", src: "/01_REELS/2026-Espolontequila-Rollforcocktail.mp4", pesoMB: 11.8 },
-    galeria: 0,
-    demo: true,
-  },
-  {
-    slug: "electrificaciones-ramos-intro",
-    titulo: "Intro",
-    cliente: "Electrificaciones Ramos",
-    clienteId: "05_ELECTRIFICACIONES_RAMOS",
-    categoria: "Servicios industriales",
-    rubro: "reels",
-    formato: "vertical",
-    anio: 2025,
-    resumen: "Pieza de contenido vertical. Texto pendiente del documento maestro.",
-    descripcion: [],
-    servicios: ["contenido-vertical"],
-    metricas: [],
-    destacado: false,
-    orden: 7,
-    media: { tipo: "local", src: "/01_REELS/2025-Electrificaciones-Ramos.mp4", pesoMB: 11.1 },
-    galeria: 0,
-    demo: true,
+    demo: false,
   },
   {
     slug: "bricka-casa-salon-eventos",
@@ -346,65 +310,286 @@ export const PIEZAS: Pieza[] = [
     clienteId: "04_BRICKA",
     categoria: "Bienes raíces",
     rubro: "reels",
+    tecnica: "live-action",
     formato: "vertical",
     anio: 2026,
-    resumen: "Un mismo espacio contando sus tres vidas posibles.",
-    descripcion: [
-      "BRICKA renta un mismo inmueble para tres usos distintos, y su problema comercial era que quien lo veía como casa no lo imaginaba como salón. La pieza resuelve eso con transiciones sobre el mismo encuadre: el espacio se transforma sin que la cámara se mueva.",
-    ],
-    servicios: ["contenido-vertical"],
-    metricas: [{ valor: "3 usos", etiqueta: "en un solo espacio" }],
-    destacado: false,
-    orden: 8,
-    media: { tipo: "local", src: "/01_REELS/2026-Bricka-CasaSalonEvento.mp4", pesoMB: 21.1 },
-    galeria: 0,
-    demo: true,
-  },
-  {
-    slug: "espolon-calle-espolon-nyc",
-    titulo: "Calle Espolón NYC",
-    cliente: "Espolón Tequila",
-    clienteId: "08_ESPOLON_TEQUILA",
-    categoria: "Destilados",
-    /* La marca nos llegó por agencia: el trabajo es para Espolón, y
-       Diptongo y NewGen son quienes lo encargaron. */
-    agencias: ["Diptongo", "NewGen"],
-    rubro: "reels",
-    formato: "vertical",
-    anio: 2026,
-    resumen: "Pieza de contenido vertical. Texto pendiente del documento maestro.",
+    resumen: "Negocio y hogar en un mismo lugar.",
+    tarjeta: "/reels/bricka-casa-salon-eventos.jpg",
     descripcion: [],
     servicios: ["contenido-vertical"],
     metricas: [],
     destacado: false,
-    orden: 9,
-    media: { tipo: "local", src: "/01_REELS/2026-Espolontequila-Calle-Espolon.mp4", pesoMB: 17.2 },
+    orden: 5,
+    media: { tipo: "local", src: "/01_REELS/2026-Bricka-CasaSalonEvento.mp4", pesoMB: 20.1 },
     galeria: 0,
-    demo: true,
+    demo: false,
   },
   {
-    slug: "espolon-rg-takes",
-    titulo: "R&G Takes",
+    slug: "espolon-rollforcocktail",
+    titulo: "Roll for Cocktail — Extra Añejo Edition",
     cliente: "Espolón Tequila",
     clienteId: "08_ESPOLON_TEQUILA",
     categoria: "Destilados",
-    /* La marca nos llegó por agencia: el trabajo es para Espolón, y
-       Diptongo y NewGen son quienes lo encargaron. */
-    agencias: ["Diptongo", "NewGen"],
+    campana: "Roll for Cocktail",
+    agencias: ["Diptongo","NewGen"],
     rubro: "reels",
+    tecnica: "live-action",
     formato: "vertical",
     anio: 2026,
-    resumen: "Pieza de contenido vertical. Texto pendiente del documento maestro.",
+    resumen: "¡Tira, juega y prepara tu trago!",
+    tarjeta: "/reels/espolon-rollforcocktail.jpg",
+    descripcion: [],
+    servicios: ["contenido-vertical"],
+    metricas: [],
+    destacado: true,
+    orden: 6,
+    media: { tipo: "local", src: "/01_REELS/2026-Espolontequila-Rollforcocktail.mp4", pesoMB: 11.3 },
+    galeria: 0,
+    demo: false,
+  },
+  {
+    slug: "espolon-calle-espolon-nyc",
+    titulo: "What does soccer mean to me?",
+    cliente: "Espolón Tequila",
+    clienteId: "08_ESPOLON_TEQUILA",
+    categoria: "Destilados",
+    campana: "Calle Espolón NYC",
+    agencias: ["Diptongo","NewGen"],
+    rubro: "reels",
+    tecnica: "live-action",
+    formato: "vertical",
+    anio: 2026,
+    resumen: "Qué significa el soccer para la gente, y el papel que juega el tequila en esos encuentros.",
+    tarjeta: "/reels/espolon-calle-espolon-nyc.jpg",
+    descripcion: [],
+    servicios: ["contenido-vertical"],
+    metricas: [],
+    destacado: false,
+    orden: 7,
+    media: { tipo: "local", src: "/01_REELS/2026-Espolontequila-Calle-Espolon.mp4", pesoMB: 16.4 },
+    galeria: 0,
+    demo: false,
+  },
+  {
+    slug: "espolon-rg-takes",
+    titulo: "Ramon & Guadalupe Takes On Margaritas",
+    cliente: "Espolón Tequila",
+    clienteId: "08_ESPOLON_TEQUILA",
+    categoria: "Destilados",
+    agencias: ["Diptongo","NewGen"],
+    rubro: "reels",
+    tecnica: "live-action",
+    formato: "vertical",
+    anio: 2026,
+    resumen: "Enfrentamiento para ver cuál margarita es la mejor. ¿La clásica o algo más arriesgado?",
+    tarjeta: "/reels/espolon-rg-takes.jpg",
+    descripcion: [],
+    servicios: ["contenido-vertical"],
+    metricas: [],
+    destacado: false,
+    orden: 8,
+    media: { tipo: "local", src: "/01_REELS/e2026-Espolontequila-rg-takes.mp4", pesoMB: 15.5 },
+    galeria: 0,
+    demo: false,
+  },
+  {
+    slug: "shiny-recorrido-detallados",
+    titulo: "Recorrido Detallados",
+    cliente: "Shiny",
+    clienteId: "14_SHINY",
+    categoria: "Limpieza de calzado",
+    campana: "Apertura",
+    rubro: "reels",
+    tecnica: "live-action",
+    formato: "vertical",
+    anio: 2025,
+    resumen: "Recorrido por los tres servicios estrella.",
+    tarjeta: "/reels/shiny-recorrido-detallados.jpg",
+    descripcion: [],
+    servicios: ["contenido-vertical"],
+    metricas: [],
+    destacado: true,
+    orden: 9,
+    media: { tipo: "local", src: "/01_REELS/2025-Shiny-Servicios.mp4", pesoMB: 18.3 },
+    galeria: 0,
+    demo: false,
+  },
+  {
+    slug: "electrificaciones-ramos-quienes-somos",
+    titulo: "¿Quiénes somos y cómo lo hacemos?",
+    cliente: "Electrificaciones Ramos",
+    clienteId: "05_ELECTRIFICACIONES_RAMOS",
+    categoria: "Instalaciones eléctricas",
+    campana: "Servicios e instalación",
+    rubro: "reels",
+    tecnica: "live-action",
+    formato: "vertical",
+    anio: 2025,
+    resumen: "Introducción a los servicios y a la filosofía detrás de cada proyecto.",
+    tarjeta: "/reels/electrificaciones-ramos-quienes-somos.jpg",
     descripcion: [],
     servicios: ["contenido-vertical"],
     metricas: [],
     destacado: false,
     orden: 10,
-    /* El archivo subió con una "e" de más al principio del nombre.
-       Funciona, pero conviene renombrarlo cuando se haga la limpieza. */
-    media: { tipo: "local", src: "/01_REELS/e2026-Espolontequila-rg-takes.mp4", pesoMB: 16.0 },
+    media: { tipo: "local", src: "/01_REELS/2025-Electrificaciones-Ramos.mp4", pesoMB: 10.6 },
     galeria: 0,
-    demo: true,
+    demo: false,
+  },
+  {
+    slug: "acrilexsa-recuerdos-mascotas",
+    titulo: "Devuélvele la luz a tu espacio",
+    cliente: "Acrilexsa",
+    clienteId: "09_ACRILEXSA",
+    categoria: "Acrílicos a medida",
+    campana: "Recuerdos de mascotas",
+    rubro: "reels",
+    tecnica: "live-action",
+    formato: "vertical",
+    anio: 2026,
+    resumen: "Campaña para recordar a esas mascotas que nos dejaron y se volvieron parte de la familia.",
+    tarjeta: "/reels/acrilexsa-recuerdos-mascotas.jpg",
+    descripcion: [],
+    servicios: ["contenido-vertical"],
+    metricas: [],
+    destacado: true,
+    orden: 11,
+    media: { tipo: "local", src: "/01_REELS/Acrilicsa-Campaña-Mascotas.mp4", pesoMB: 17.3 },
+    galeria: 0,
+    demo: false,
+  },
+  {
+    slug: "tecmilenio-que-buscan-las-empresas",
+    titulo: "¿Qué buscan las empresas?",
+    cliente: "Tecmilenio",
+    clienteId: "06_TECMI",
+    categoria: "Educación",
+    campana: "Animaciones para dirección",
+    rubro: "reels",
+    tecnica: "animacion",
+    formato: "vertical",
+    anio: 2025,
+    resumen: "Animación para la serie de piezas de dirección.",
+    tarjeta: "/reels/tecmilenio-que-buscan-las-empresas.jpg",
+    descripcion: [],
+    servicios: ["contenido-vertical"],
+    metricas: [],
+    colaboradores: [{"nombre":"Bruno Zepeda","rol":"Dirección"}],
+    destacado: true,
+    orden: 12,
+    media: { tipo: "local", src: "/02_ANIMACIONES/ANIMACION-TECMI-1.mp4", pesoMB: 5.5 },
+    galeria: 0,
+    demo: false,
+  },
+  {
+    slug: "tecmilenio-peligro-oportunidad",
+    titulo: "Peligro & Oportunidad",
+    cliente: "Tecmilenio",
+    clienteId: "06_TECMI",
+    categoria: "Educación",
+    campana: "Animaciones para dirección",
+    rubro: "reels",
+    tecnica: "animacion",
+    formato: "vertical",
+    anio: 2025,
+    resumen: "Animación para la serie de piezas de dirección.",
+    tarjeta: "/reels/tecmilenio-peligro-oportunidad.jpg",
+    descripcion: [],
+    servicios: ["contenido-vertical"],
+    metricas: [],
+    colaboradores: [{"nombre":"Bruno Zepeda","rol":"Dirección"}],
+    destacado: false,
+    orden: 13,
+    media: { tipo: "local", src: "/02_ANIMACIONES/ANIMACION-TECMI-2.mp4", pesoMB: 10.4 },
+    galeria: 0,
+    demo: false,
+  },
+  {
+    slug: "escena-cuatro-cumpleanos-angel",
+    titulo: "Cumpleaños Angel",
+    cliente: "Escena Cuatro",
+    clienteId: "07_CREW",
+    categoria: "Producción audiovisual",
+    campana: "Cumpleaños Crew",
+    rubro: "reels",
+    tecnica: "animacion",
+    formato: "vertical",
+    anio: 2025,
+    resumen: "Felicitación animada para el equipo.",
+    tarjeta: "/reels/escena-cuatro-cumpleanos-angel.jpg",
+    descripcion: [],
+    servicios: ["contenido-vertical"],
+    metricas: [],
+    destacado: false,
+    orden: 14,
+    media: { tipo: "local", src: "/02_ANIMACIONES/ANIMACION-CREW-1.mp4", pesoMB: 16.2 },
+    galeria: 0,
+    demo: false,
+  },
+  {
+    slug: "escena-cuatro-cumpleanos-gerry",
+    titulo: "Cumpleaños Gerry",
+    cliente: "Escena Cuatro",
+    clienteId: "07_CREW",
+    categoria: "Producción audiovisual",
+    campana: "Cumpleaños Crew",
+    rubro: "reels",
+    tecnica: "animacion",
+    formato: "vertical",
+    anio: 2025,
+    resumen: "Felicitación animada para el equipo.",
+    tarjeta: "/reels/escena-cuatro-cumpleanos-gerry.jpg",
+    descripcion: [],
+    servicios: ["contenido-vertical"],
+    metricas: [],
+    destacado: false,
+    orden: 15,
+    media: { tipo: "local", src: "/02_ANIMACIONES/ANIMACION-CREW-2.mp4", pesoMB: 6.3 },
+    galeria: 0,
+    demo: false,
+  },
+  {
+    slug: "escena-cuatro-felices-fiestas",
+    titulo: "¡Felices fiestas!",
+    cliente: "Escena Cuatro",
+    clienteId: "07_CREW",
+    categoria: "Producción audiovisual",
+    campana: "Cierre de año",
+    rubro: "reels",
+    tecnica: "animacion",
+    formato: "vertical",
+    anio: 2025,
+    resumen: "Pieza de cierre de año para redes.",
+    tarjeta: "/reels/escena-cuatro-felices-fiestas.jpg",
+    descripcion: [],
+    servicios: ["contenido-vertical"],
+    metricas: [],
+    destacado: false,
+    orden: 16,
+    media: { tipo: "local", src: "/02_ANIMACIONES/GIF-NAVIDAD ESCEN4.mp4", pesoMB: 16.5 },
+    galeria: 0,
+    demo: false,
+  },
+  {
+    slug: "intelisis-animacion-logo",
+    titulo: "Propuesta Animación Logo Intelisis",
+    cliente: "Intelisis",
+    clienteId: "10_INTELISIS",
+    categoria: "Software empresarial",
+    rubro: "reels",
+    tecnica: "animacion",
+    formato: "vertical",
+    anio: 2025,
+    resumen: "Ejercicio de animación para la marca Intelisis software.",
+    tarjeta: "/reels/intelisis-animacion-logo.jpg",
+    descripcion: [],
+    servicios: ["contenido-vertical"],
+    metricas: [],
+    destacado: false,
+    orden: 17,
+    media: { tipo: "local", src: "/02_ANIMACIONES/ANIMACION-LOGO-INTELISIS.mp4", pesoMB: 2 },
+    galeria: 0,
+    demo: false,
   },
 
   /* ─── COMERCIAL 16:9 ─── */
@@ -1238,7 +1423,10 @@ export const PIEZAS: Pieza[] = [
    intacta. Solo desaparecen de los listados, del menú de filtros y de
    las rutas generadas. Para volver a mostrarlas basta con sacar el
    rubro de esta lista. */
-export const RUBROS_OCULTOS: Rubro[] = ["web", "diseno"];
+/* Rubros que existen en el modelo pero no se enseñan todavía. El
+   audiovisual comercial se apaga a propósito: las piezas están, pero
+   el estudio prefiere no ofrecerlo por ahora. */
+export const RUBROS_OCULTOS: Rubro[] = ["web", "diseno", "comercial"];
 
 export const esVisible = (p: Pieza) => !RUBROS_OCULTOS.includes(p.rubro);
 
@@ -1258,6 +1446,20 @@ export const rubrosActivos = () =>
   RUBROS.filter(
     (r) => !RUBROS_OCULTOS.includes(r.id) && PIEZAS.some((p) => p.rubro === r.id)
   );
+
+/* Las secciones que hoy tienen algo que enseñar: se descartan las de
+   rubros ocultos y las que quedarían vacías. */
+export const seccionesActivas = () =>
+  SECCIONES.map((sec) => ({
+    ...sec,
+    rubros: sec.rubros.filter((r) => !RUBROS_OCULTOS.includes(r)),
+  })).filter(
+    (sec) => sec.rubros.length > 0 && PIEZAS.some((p) => sec.rubros.includes(p.rubro))
+  );
+
+/* Los reels separados por técnica, que es como los divide el feed */
+export const reelsPorTecnica = (t?: Tecnica) =>
+  reels().filter((p) => !t || (p.tecnica ?? "live-action") === t);
 
 export const otrasDelCliente = (p: Pieza) =>
   visibles().filter((o) => o.clienteId === p.clienteId && o.slug !== p.slug);

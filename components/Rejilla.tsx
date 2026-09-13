@@ -4,7 +4,15 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import Grafico from "./Grafico";
 import Placeholder from "./Placeholder";
-import { visibles, rubrosActivos, MEDIDAS, iniciales, type Pieza, type Rubro } from "@/lib/content";
+import {
+  visibles,
+  seccionesActivas,
+  RUBROS,
+  MEDIDAS,
+  iniciales,
+  type Pieza,
+  type Rubro,
+} from "@/lib/content";
 import { urlMedia } from "@/lib/media";
 
 /* Rejilla asimétrica tipo bento.
@@ -197,36 +205,62 @@ function Tarjeta({ p }: { p: Pieza }) {
 }
 
 export default function Rejilla() {
-  const [filtro, setFiltro] = useState<Rubro | "todos">("todos");
+  /* Dos niveles de filtro. El de arriba elige la sección —Marca,
+     Reels, Foto—; el de abajo solo aparece cuando la sección cubre
+     más de un rubro, como Marca, que junta completa y exprés. */
+  const [seccion, setSeccion] = useState<string>("todos");
+  const [rubro, setRubro] = useState<Rubro | "todos">("todos");
 
-  const lista = useMemo(
-    () => visibles().filter((p) => filtro === "todos" || p.rubro === filtro),
-    [filtro]
-  );
+  const secciones = useMemo(() => seccionesActivas(), []);
+  const activa = secciones.find((s) => s.id === seccion);
 
-  const total = visibles().length;
-  const conteo = (r: Rubro) => visibles().filter((p) => p.rubro === r).length;
+  const lista = useMemo(() => {
+    const todas = visibles();
+    if (!activa) return todas;
+    if (rubro !== "todos") return todas.filter((p) => p.rubro === rubro);
+    return todas.filter((p) => activa.rubros.includes(p.rubro));
+  }, [activa, rubro]);
+
+  const elegir = (id: string) => {
+    setSeccion(id);
+    setRubro("todos");
+  };
+
+  const cuenta = (rs: Rubro[]) => visibles().filter((p) => rs.includes(p.rubro)).length;
 
   return (
     <>
       {/* Filtro: reordena en vivo, no navega a otra página */}
-      <div className="flex flex-wrap gap-2 mb-8">
-        <Boton activo={filtro === "todos"} onClick={() => setFiltro("todos")}>
-          Todo <span className="opacity-50">{total}</span>
+      <div className="flex flex-wrap gap-2">
+        <Boton activo={seccion === "todos"} onClick={() => elegir("todos")}>
+          Todo <span className="opacity-50">{visibles().length}</span>
         </Boton>
-        {rubrosActivos().filter((r) => conteo(r.id) > 0).map((r) => (
-          <Boton
-            key={r.id}
-            activo={filtro === r.id}
-            onClick={() => setFiltro(r.id)}
-          >
-            {r.corto} <span className="opacity-50">{conteo(r.id)}</span>
+        {secciones.map((sec) => (
+          <Boton key={sec.id} activo={seccion === sec.id} onClick={() => elegir(sec.id)}>
+            {sec.corto} <span className="opacity-50">{cuenta(sec.rubros)}</span>
           </Boton>
         ))}
       </div>
 
+      {/* Segundo nivel: solo donde la sección junta varios rubros */}
+      {activa && activa.rubros.length > 1 && (
+        <div className="mt-3 flex flex-wrap gap-2 [animation:aparecer_.3s_var(--ease-eci)]">
+          <Sub activo={rubro === "todos"} onClick={() => setRubro("todos")}>
+            Todas
+          </Sub>
+          {activa.rubros.map((r) => (
+            <Sub key={r} activo={rubro === r} onClick={() => setRubro(r)}>
+              {RUBROS.find((x) => x.id === r)?.corto}{" "}
+              <span className="opacity-50">{cuenta([r])}</span>
+            </Sub>
+          ))}
+        </div>
+      )}
+
+      <div className="mb-8" />
+
       <div
-        key={filtro}
+        key={seccion + rubro}
         className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-3 md:gap-4 [animation:aparecer_.4s_var(--ease-eci)]"
       >
         {lista.map((p) => (
@@ -234,6 +268,31 @@ export default function Rejilla() {
         ))}
       </div>
     </>
+  );
+}
+
+/* Segundo nivel: subrayado en vez de píldora, para que se lea como
+   una precisión del filtro de arriba y no como otro filtro igual. */
+function Sub({
+  activo,
+  onClick,
+  children,
+}: {
+  activo: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`border-b pb-0.5 text-[13px] transition-colors ${
+        activo
+          ? "border-[var(--color-menta)] text-[var(--color-menta)]"
+          : "border-transparent text-[var(--color-texto-tenue)] hover:text-[var(--color-crema)]"
+      }`}
+    >
+      {children}
+    </button>
   );
 }
 

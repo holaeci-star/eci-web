@@ -132,6 +132,7 @@ export default function FeedReels({ inicial }: { inicial?: string }) {
                   <video
                     ref={(el) => { videos.current[i] = el; }}
                     src={urlMedia(p.media.src)}
+                    poster={p.tarjeta ? urlMedia(p.tarjeta) : undefined}
                     loop
                     muted={!sonido || i !== activo}
                     playsInline
@@ -219,10 +220,10 @@ function Interfaz({
       {/* Superior */}
       <div className="pointer-events-none absolute inset-x-0 top-0 z-30 flex items-start justify-between p-4 md:p-6">
         <Link
-          href="/trabajo"
+          href="/reels"
           className="pointer-events-auto rounded-full bg-[color-mix(in_srgb,#111827_70%,transparent)] px-4 py-2 text-sm text-[var(--color-crema)] backdrop-blur-md hover:bg-[var(--color-crema)] hover:text-[var(--color-profundo)] transition-colors"
         >
-          ← Cerrar
+          ← Todos los reels
         </Link>
         <div className="pointer-events-auto flex gap-2">
           <button
@@ -267,6 +268,11 @@ function Interfaz({
               <span className="ml-2 text-[var(--color-texto-tenue)]">· campaña {pieza.campana}</span>
             )}
           </p>
+          {pieza.tecnica === "animacion" && (
+            <p className="mt-1 text-[10px] uppercase tracking-[0.18em] text-[color-mix(in_srgb,#eeebe3_55%,transparent)]">
+              Animación
+            </p>
+          )}
           {pieza.agencias && pieza.agencias.length > 0 && (
             <p className="mt-1 text-[11px] text-[color-mix(in_srgb,#eeebe3_62%,transparent)]">
               Con {listar(pieza.agencias)}
