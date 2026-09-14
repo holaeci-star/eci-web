@@ -1,31 +1,19 @@
-import { Suspense } from "react";
-import RejillaReels from "@/components/RejillaReels";
+import { redirect } from "next/navigation";
+import { reels } from "@/lib/content";
 
-export const metadata = {
-  title: "Reels",
-  description:
-    "Contenido vertical para redes: piezas grabadas y de animación, de campaña y de marca.",
-};
+/* Entrar a Reels es entrar al reproductor.
 
-/* Entrar a Reels ya no cae directo en el feed a pantalla completa.
-   Primero se ve el catálogo completo y desde ahí se elige por dónde
-   empezar; el feed vive en /reels/<slug>. */
+   Había una pantalla intermedia con el catálogo en cuadrícula: se
+   elegía un reel y de ahí se pasaba al feed. Dos pasos para ver un
+   video de quince segundos, y una cuadrícula de miniaturas mudas que
+   compite mal con el formato al que el visitante ya está acostumbrado.
+   Ahora la categoría abre directo en el primero y desde ahí se
+   desliza; el filtro de grabado o animado se quedó dentro del feed.
+
+   La ruta sobrevive —el menú, la portada y cualquier enlace viejo
+   siguen apuntando aquí— y redirige del lado del servidor, así que no
+   hay parpadeo: el navegador nunca llega a pintar esta página. */
 export default function Reels() {
-  return (
-    <section className="mx-auto max-w-[1400px] px-6 lg:px-10 py-14 md:py-20">
-      <h1 className="display text-4xl md:text-6xl text-[var(--color-crema)]">
-        Reels
-      </h1>
-      <p className="mt-5 max-w-2xl text-base leading-relaxed text-[color-mix(in_srgb,#eeebe3_72%,transparent)]">
-        Contenido vertical para redes. Elige uno para verlo a pantalla completa
-        y seguir el feed desde ahí.
-      </p>
-
-      <div className="mt-10">
-        <Suspense>
-          <RejillaReels />
-        </Suspense>
-      </div>
-    </section>
-  );
+  const primero = reels()[0];
+  redirect(primero ? `/reels/${primero.slug}?volver=/trabajo` : "/trabajo");
 }

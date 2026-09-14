@@ -1,16 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import TarjetaTrabajo from "./TarjetaTrabajo";
-import {
-  visibles,
-  seccionesActivas,
-  RUBROS,
-  TECNICAS,
-  type Rubro,
-  type Tecnica,
-} from "@/lib/content";
+import { visibles, seccionesActivas, RUBROS, type Rubro } from "@/lib/content";
 
 /* Rejilla asimétrica tipo bento.
 
@@ -22,67 +15,64 @@ import {
 
 export default function Rejilla() {
   /* Dos niveles de filtro. El de arriba elige la sección; el de abajo
-     solo aparece donde hay algo que precisar: Marca se parte entre
-     completa y exprés, Reels entre grabado y animado.
+     solo aparece donde hay algo que precisar —Marca se parte entre
+     completa y exprés—.
 
-     El estado arranca de la URL —?seccion=reels&sub=animacion— para
-     que quien entra a un reel y regresa caiga en el mismo filtro del
-     que salió, en vez de en el listado completo. */
+     El estado arranca de la URL —?seccion=marca&sub=marca-express—
+     para que quien entra a un proyecto y regresa caiga en el mismo
+     filtro del que salió, en vez de en el listado completo. */
   const params = useSearchParams();
+  const router = useRouter();
   const [seccion, setSeccion] = useState<string>(params.get("seccion") ?? "todos");
   const [sub, setSub] = useState<string>(params.get("sub") ?? "todos");
 
   const secciones = useMemo(() => seccionesActivas(), []);
   const activa = secciones.find((s) => s.id === seccion);
 
-  /* Qué se enseña en el segundo nivel: los rubros de la sección, o
-     las técnicas si la sección se divide así. */
-  const opciones = !activa
-    ? []
-    : activa.porTecnica
-    ? TECNICAS.map((t) => ({ id: t.id as string, nombre: t.nombre }))
-    : activa.rubros.length > 1
-    ? activa.rubros.map((r) => ({
-        id: r as string,
-        nombre: RUBROS.find((x) => x.id === r)?.corto ?? r,
-      }))
-    : [];
+  /* Qué se enseña en el segundo nivel: los rubros de la sección,
+     cuando son más de uno. */
+  const opciones =
+    !activa || activa.rubros.length < 2
+      ? []
+      : activa.rubros.map((r) => ({
+          id: r as string,
+          nombre: RUBROS.find((x) => x.id === r)?.corto ?? r,
+        }));
 
-  /* Cuántas piezas caen en una opción del segundo nivel */
-  const enOpcion = (id: string) =>
-    visibles().filter((x) =>
-      activa?.porTecnica
-        ? x.rubro === "reels" && (x.tecnica ?? "live-action") === id
-        : x.rubro === id
-    ).length;
+  const enOpcion = (id: string) => visibles().filter((x) => x.rubro === id).length;
 
   const lista = useMemo(() => {
     const todas = visibles();
     if (!activa) return todas;
     const deLaSeccion = todas.filter((x) => activa.rubros.includes(x.rubro));
-    if (sub === "todos") return deLaSeccion;
-    return activa.porTecnica
-      ? deLaSeccion.filter((x) => (x.tecnica ?? "live-action") === sub)
+    return sub === "todos"
+      ? deLaSeccion
       : deLaSeccion.filter((x) => x.rubro === sub);
   }, [activa, sub]);
 
-  const elegir = (id: string) => {
+  /* Una sección puede no ser un filtro sino una puerta: Reels abre el
+     reproductor a pantalla completa en vez de reordenar la rejilla. */
+  const elegir = (id: string, directo?: string) => {
+    if (directo) {
+      router.push(`${directo}?volver=${encodeURIComponent("/trabajo")}`);
+      return;
+    }
     setSeccion(id);
     setSub("todos");
   };
 
   const cuenta = (rs: Rubro[]) => visibles().filter((x) => rs.includes(x.rubro)).length;
 
-  /* Un reel se abre llevándose a dónde tiene que volver. Se manda la
-     ruta entera y no los filtros sueltos: así el feed no tiene que
-     saber nada de secciones ni de técnicas para regresar bien. */
+  /* Cada pieza se abre llevándose a dónde tiene que volver. Se manda
+     la ruta entera y no los filtros sueltos: así ni el caso ni el feed
+     tienen que saber nada de secciones para regresar bien. */
   const volver = encodeURIComponent(
     `/trabajo?seccion=${seccion}${sub !== "todos" ? `&sub=${sub}` : ""}`
   );
   const rutaDe = (x: { slug: string; rubro: string }) =>
     x.rubro === "reels"
       ? `/reels/${x.slug}?volver=${volver}`
-      : `/trabajo/${x.slug}`;
+      : `/trabajo/${x.slug}?volver=${volver}`;
 
   return (
     <>
@@ -92,7 +82,11 @@ export default function Rejilla() {
           Todo <span className="opacity-50">{visibles().length}</span>
         </Boton>
         {secciones.map((sec) => (
-          <Boton key={sec.id} activo={seccion === sec.id} onClick={() => elegir(sec.id)}>
+          <Boton
+            key={sec.id}
+            activo={seccion === sec.id}
+            onClick={() => elegir(sec.id, sec.directo)}
+          >
             {sec.corto} <span className="opacity-50">{cuenta(sec.rubros)}</span>
           </Boton>
         ))}

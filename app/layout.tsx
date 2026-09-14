@@ -45,20 +45,44 @@ export default function RootLayout({
                 {SITIO.manifiesto}
               </p>
             </div>
-            <div className="flex flex-col gap-2 text-sm md:text-right">
-              <a href={`mailto:${SITIO.correo}`} className="hover:text-[var(--color-menta)] transition-colors">
+            {/* Todo lo del pie es contacto, así que todo se puede
+                picar. Antes el correo era un enlace y el resto texto
+                muerto: quien quería escribir por Instagram tenía que
+                buscarlo aparte. */}
+            <div className="flex flex-col gap-2 text-sm md:items-end md:text-right">
+              <a
+                href={`mailto:${SITIO.correo}`}
+                className="transition-colors hover:text-[var(--color-menta)]"
+              >
                 {SITIO.correo}
               </a>
-              <span className="text-[var(--color-texto-tenue)]">{SITIO.instagram}</span>
-              <span className="text-[var(--color-texto-tenue)]">{SITIO.whatsapp}</span>
+              <a
+                href={`tel:${SITIO.telefonoE164}`}
+                className="text-[var(--color-texto-tenue)] transition-colors hover:text-[var(--color-menta)]"
+              >
+                {SITIO.telefono}
+              </a>
+              <a
+                href={SITIO.instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[var(--color-texto-tenue)] transition-colors hover:text-[var(--color-menta)]"
+              >
+                Instagram · {SITIO.instagram}
+              </a>
+              <a
+                href={SITIO.facebookUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[var(--color-texto-tenue)] transition-colors hover:text-[var(--color-menta)]"
+              >
+                Facebook
+              </a>
               <span className="text-[var(--color-texto-tenue)]">{SITIO.ciudad}</span>
             </div>
           </div>
           <div className="mx-auto max-w-[1400px] px-6 lg:px-10 pb-10 flex flex-wrap gap-x-6 gap-y-2 text-xs text-[var(--color-texto-tenue)]">
             <span>© {new Date().getFullYear()} {SITIO.nombreLargo}</span>
-            <span className="text-[var(--color-naranja)]">
-              Prototipo · contenido de demostración
-            </span>
           </div>
         </footer>
       </body>

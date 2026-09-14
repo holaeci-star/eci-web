@@ -1,15 +1,20 @@
 /* ───────────────────────────────────────────────────────────────
-   CONTENIDO DE DEMOSTRACIÓN
+   EL CATÁLOGO DE TRABAJO
 
-   Un proyecto de ejemplo por cada tipo de área, con la ficha
-   completamente llena. Sirve para dos cosas:
+   Una ficha por pieza, con todo lo que la página necesita saber de
+   ella. Es el archivo completo: lo que se enseña sale de aquí
+   filtrado, nunca directo.
 
-   1. Probar la estructura de la web sin material exportado.
-   2. Enseñarle al equipo qué tan largo debe ser cada campo y con
-      qué tono se escribe.
+   Dos banderas deciden qué se ve:
 
-   TODAS las piezas llevan `demo: true`. Antes de lanzar se apagan
-   con una sola bandera — no queda rastro.
+   - `demo`   La ficha se escribió para probar la estructura, sin
+               material real detrás. Quedan las de los rubros que
+               todavía no arrancan; las secciones encendidas ya
+               tienen proyectos de verdad y no enseñan ninguna.
+   - RUBROS_OCULTOS   El área existe pero no se ofrece todavía.
+
+   Ninguna de las dos borra nada: la ficha se queda escrita y vuelve
+   con cambiar la bandera.
 
    La estructura de estos objetos es idéntica al frontmatter de
    _FICHA.md en 01_RECURSOS/00_NuevoOrden. Cuando conectemos Sanity,
@@ -161,16 +166,45 @@ export type Pieza = {
 
    Van aparte de la pieza porque esa franja lista CLIENTES, no
    trabajos: un cliente con tres proyectos aparece una sola vez, y no
-   tendría sentido repetir el mismo archivo en cada ficha. Donde no
-   hay logo se sigue escribiendo el nombre, que es como estaba. */
-export const LOGOS_CLIENTE: Record<string, string> = {
-  "Don Neto": "/clientes/don-neto.svg",
-  Minturina: "/clientes/minturina.svg",
-  Shiny: "/clientes/shiny.svg",
+   tendría sentido repetir el mismo archivo en cada ficha.
+
+   Quien no tiene logotipo exportado no aparece. Antes se escribía su
+   nombre en texto y la franja se leía como una lista a medio hacer:
+   unas marcas con su tipografía y otras con la del sitio. Vale más
+   una fila corta y pareja.
+
+   El ratio es ancho ÷ alto del trazo ya recortado, y lo mide
+   _herramientas-eci/clientes-logos.js. Sirve para dibujarlos por área
+   y no por altura: ver `altoLogo`. */
+export type LogoCliente = { src: string; ratio: number };
+
+export const LOGOS_CLIENTE: Record<string, LogoCliente> = {
+  Desvelados: { src: "/clientes/desvelados.svg", ratio: 1.79 },
+  BRICKA: { src: "/clientes/bricka.svg", ratio: 4.72 },
+  "Espolón Tequila": { src: "/clientes/espolon-tequila.svg", ratio: 6.6 },
+  Tecmilenio: { src: "/clientes/tecmilenio.svg", ratio: 5.06 },
+  athypico34: { src: "/clientes/athypico34.svg", ratio: 2.62 },
+  "Don Neto": { src: "/clientes/don-neto.svg", ratio: 2.96 },
+  Minturina: { src: "/clientes/minturina.svg", ratio: 4.55 },
+  Shiny: { src: "/clientes/shiny.svg", ratio: 1.46 },
   /* De las cuatro exprés solo Klevers va aquí: las tres marcas de
      Kevin se quedan fuera de la franja por decisión del cliente. */
-  Klevers: "/clientes/klevers.svg",
+  Klevers: { src: "/clientes/klevers.svg", ratio: 6.2 },
 };
+
+/* A qué altura se dibuja un logotipo en la franja.
+
+   No todos a la misma: un logo apilado y casi cuadrado —Shiny,
+   Desvelados— puesto a la altura de uno alargado —Klevers, Espolón—
+   se ve diminuto, que es justo lo que pasaba con Shiny. Lo que el ojo
+   compara no es la altura sino la mancha que deja cada uno, así que
+   se iguala el área y la altura sale de la proporción.
+
+   3 400 px² deja un nombre alargado cerca de 29 px, que es donde ya
+   estaba calibrada la franja; los topes evitan que un logo extremo
+   se coma la fila o desaparezca. */
+export const altoLogo = (ratio: number) =>
+  Math.round(Math.min(46, Math.max(22, Math.sqrt(3400 / ratio))));
 
 /* "A", "A y B", "A, B y C" — para créditos que se leen como frase */
 export const listar = (xs: string[]): string =>
@@ -200,13 +234,15 @@ export const SECCIONES: {
   id: string;
   corto: string;
   rubros: Rubro[];
-  /* Reels se subdivide por cómo se hizo la pieza, no por rubro: son
-     todas el mismo servicio, pero grabar y animar son oficios
-     distintos y quien busca uno rara vez quiere el otro. */
-  porTecnica?: boolean;
+  /* Una sección que en vez de filtrar la rejilla lleva a otra parte.
+     Reels es la única: sus piezas son verticales de quince segundos y
+     se ven mejor en el reproductor a pantalla completa que en una
+     cuadrícula de miniaturas mudas. La separación entre grabado y
+     animado se mudó ahí dentro con ellas. */
+  directo?: string;
 }[] = [
   { id: "marca", corto: "Marca", rubros: ["marca", "marca-express"] },
-  { id: "reels", corto: "Reels", rubros: ["reels"], porTecnica: true },
+  { id: "reels", corto: "Reels", rubros: ["reels"], directo: "/reels" },
   { id: "comercial", corto: "Comercial", rubros: ["comercial"] },
   { id: "foto", corto: "Foto", rubros: ["foto"] },
   { id: "diseno", corto: "Diseño", rubros: ["diseno"] },
@@ -1432,15 +1468,15 @@ export const PIEZAS: Pieza[] = [
   },
 
   /* ═══════════════════════════════════════════════════════════════
-     FOTO · Athípico — PRIMERA PIEZA CON MATERIAL REAL
+     FOTO · athypico34 — PRIMERA PIEZA CON MATERIAL REAL
 
      Los textos son una PROPUESTA, escrita a partir de las imágenes.
      Elihu los reescribe con lo que realmente se acordó con el cliente.
      ═══════════════════════════════════════════════════════════════ */
   {
-    slug: "athipico-producto",
+    slug: "athypico34-producto",
     titulo: "Antes de la taza",
-    cliente: "Athípico",
+    cliente: "athypico34",
     clienteId: "01_ATHIPICO",
     categoria: "Café de especialidad",
     rubro: "foto",
@@ -1448,13 +1484,13 @@ export const PIEZAS: Pieza[] = [
     anio: 2025,
     resumen:
       "La molienda, la extracción y el vertido, fotografiados con la misma precisión con que se ejecutan.",
-    portada: "/trabajo/athipico-producto/portada.jpg",
-    tarjeta: "/trabajo/athipico-producto/tarjeta.jpg",
-    tarjetaHover: "/trabajo/athipico-producto/tarjeta-hover.jpg",
+    portada: "/trabajo/athypico34-producto/portada.jpg",
+    tarjeta: "/trabajo/athypico34-producto/tarjeta.jpg",
+    tarjetaHover: "/trabajo/athypico34-producto/tarjeta-hover.jpg",
     contexto: {
       titulo: "El precio se explica solo si se ve",
       parrafos: [
-        "Un café de especialidad cuesta el doble que uno de cadena, y esa diferencia vive en pasos que el cliente nunca alcanza a ver: la molienda al gramo, la distribución pareja, los segundos exactos de extracción. Athípico necesitaba mostrar ese trabajo sin caer en el catálogo de producto.",
+        "Un café de especialidad cuesta el doble que uno de cadena, y esa diferencia vive en pasos que el cliente nunca alcanza a ver: la molienda al gramo, la distribución pareja, los segundos exactos de extracción. athypico34 necesitaba mostrar ese trabajo sin caer en el catálogo de producto.",
         "La sesión se resolvió como una secuencia de proceso y no como fotos sueltas: cada imagen es un momento del ritual, en el orden en que ocurre. La luz se mantuvo cálida y baja para que el metal y la madera conservaran su textura, y el fondo se dejó siempre fuera de foco para que nunca compitiera con las manos.",
       ],
     },
@@ -1472,8 +1508,8 @@ export const PIEZAS: Pieza[] = [
       {
         tipo: "cuadricula",
         imagenes: [
-          { w: 1287, h: 2000, src: "/trabajo/athipico-producto/galeria/01.jpg", pie: "El resultado, antes de contar cómo se llega" },
-          { w: 1333, h: 2000, src: "/trabajo/athipico-producto/galeria/04.jpg", pie: "Dosificación al portafiltro" },
+          { w: 1287, h: 2000, src: "/trabajo/athypico34-producto/galeria/01.jpg", pie: "El resultado, antes de contar cómo se llega" },
+          { w: 1333, h: 2000, src: "/trabajo/athypico34-producto/galeria/04.jpg", pie: "Dosificación al portafiltro" },
         ],
       },
       {
@@ -1482,20 +1518,20 @@ export const PIEZAS: Pieza[] = [
         parrafos: [
           "El primer bloque de la secuencia se dedica al molino porque es donde se decide casi todo: el grosor, el peso exacto, la distribución dentro del portafiltro. Es también el paso menos vistoso, así que se fotografió en plano cerrado para que la textura del café molido cargara la imagen.",
         ],
-        imagen: { w: 1333, h: 2000, src: "/trabajo/athipico-producto/galeria/05.jpg", pie: "Molienda lista, antes del prensado" },
+        imagen: { w: 1333, h: 2000, src: "/trabajo/athypico34-producto/galeria/05.jpg", pie: "Molienda lista, antes del prensado" },
       },
       {
         tipo: "cuadricula",
         imagenes: [
-          { w: 1333, h: 2000, src: "/trabajo/athipico-producto/galeria/06.jpg", pie: "Extracción" },
-          { w: 1333, h: 2000, src: "/trabajo/athipico-producto/galeria/07.jpg", pie: "Los primeros segundos, en detalle" },
+          { w: 1333, h: 2000, src: "/trabajo/athypico34-producto/galeria/06.jpg", pie: "Extracción" },
+          { w: 1333, h: 2000, src: "/trabajo/athypico34-producto/galeria/07.jpg", pie: "Los primeros segundos, en detalle" },
         ],
       },
       {
         tipo: "cuadricula",
         imagenes: [
-          { w: 1333, h: 2000, src: "/trabajo/athipico-producto/galeria/08.jpg", pie: "Vaporizado de la leche" },
-          { w: 1333, h: 2000, src: "/trabajo/athipico-producto/galeria/09.jpg", pie: "La jarra, lista para verter" },
+          { w: 1333, h: 2000, src: "/trabajo/athypico34-producto/galeria/08.jpg", pie: "Vaporizado de la leche" },
+          { w: 1333, h: 2000, src: "/trabajo/athypico34-producto/galeria/09.jpg", pie: "La jarra, lista para verter" },
         ],
       },
       {
@@ -1508,15 +1544,15 @@ export const PIEZAS: Pieza[] = [
       {
         tipo: "cuadricula",
         imagenes: [
-          { w: 1390, h: 2000, src: "/trabajo/athipico-producto/galeria/10.jpg", pie: "El vertido" },
-          { w: 1333, h: 2000, src: "/trabajo/athipico-producto/galeria/11.jpg", pie: "Taza terminada" },
+          { w: 1390, h: 2000, src: "/trabajo/athypico34-producto/galeria/10.jpg", pie: "El vertido" },
+          { w: 1333, h: 2000, src: "/trabajo/athypico34-producto/galeria/11.jpg", pie: "Taza terminada" },
         ],
       },
       {
         tipo: "cuadricula",
         imagenes: [
-          { w: 1333, h: 2000, src: "/trabajo/athipico-producto/galeria/02.jpg", pie: "Bebida fría de temporada" },
-          { w: 1333, h: 2000, src: "/trabajo/athipico-producto/galeria/03.jpg", pie: "Integrado frente al cliente" },
+          { w: 1333, h: 2000, src: "/trabajo/athypico34-producto/galeria/02.jpg", pie: "Bebida fría de temporada" },
+          { w: 1333, h: 2000, src: "/trabajo/athypico34-producto/galeria/03.jpg", pie: "Integrado frente al cliente" },
         ],
       },
     ],
@@ -1524,7 +1560,7 @@ export const PIEZAS: Pieza[] = [
     orden: 9,
     media: { tipo: "ninguno" },
     galeria: 0,
-    demo: true,
+    demo: false,
   },
 
   /* ─── FOTO ─── */
@@ -1672,7 +1708,13 @@ export const PIEZAS: Pieza[] = [
    el estudio prefiere no ofrecerlo por ahora. */
 export const RUBROS_OCULTOS: Rubro[] = ["web", "diseno", "comercial"];
 
-export const esVisible = (p: Pieza) => !RUBROS_OCULTOS.includes(p.rubro);
+/* Una pieza se enseña si su rubro está encendido y si no es de
+   relleno. Las de demostración se escribieron para probar la
+   estructura con las fichas llenas, y ya cumplieron: hoy hay material
+   real en cada sección y dejarlas puestas es enseñar proyectos que no
+   existen. Siguen en el archivo, sin ruta y fuera de todo listado. */
+export const esVisible = (p: Pieza) =>
+  !RUBROS_OCULTOS.includes(p.rubro) && !p.demo;
 
 /* Todas las piezas publicables. Es la lista que deben usar los
    listados; PIEZAS queda como archivo completo. */
@@ -1700,10 +1742,6 @@ export const seccionesActivas = () =>
   })).filter(
     (sec) => sec.rubros.length > 0 && PIEZAS.some((p) => sec.rubros.includes(p.rubro))
   );
-
-/* Los reels separados por técnica, que es como los divide el feed */
-export const reelsPorTecnica = (t?: Tecnica) =>
-  reels().filter((p) => !t || (p.tecnica ?? "live-action") === t);
 
 export const otrasDelCliente = (p: Pieza) =>
   visibles().filter((o) => o.clienteId === p.clienteId && o.slug !== p.slug);

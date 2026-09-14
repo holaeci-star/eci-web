@@ -1,7 +1,9 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import Grafico from "@/components/Grafico";
 import { notFound } from "next/navigation";
 import Placeholder from "@/components/Placeholder";
+import Volver from "@/components/Volver";
 import ModulosCaso from "@/components/ModulosCaso";
 import Colaboradores from "@/components/Colaboradores";
 import ReproductorYouTube from "@/components/ReproductorYouTube";
@@ -77,12 +79,11 @@ export default async function Caso({
 
   return (
     <article className="mx-auto max-w-[1100px] px-6 lg:px-10 py-14 md:py-20">
-      <Link
-        href="/trabajo"
-        className="text-sm text-[var(--color-texto-tenue)] hover:text-[var(--color-menta)] transition-colors"
-      >
-        ← Trabajo
-      </Link>
+      {/* Leer la consulta obliga a una frontera de suspenso: el resto
+          de la página es estática y se compila una sola vez. */}
+      <Suspense fallback={<span className="text-sm text-[var(--color-texto-tenue)]">← Trabajo</span>}>
+        <Volver />
+      </Suspense>
 
       {/* ── Identidad del cliente ── */}
       <header className="mt-8">
@@ -223,7 +224,7 @@ export default async function Caso({
                 className="group"
               >
                 <div
-                  className="overflow-hidden rounded-xl border border-[var(--color-borde)]"
+                  className="relative overflow-hidden rounded-xl border border-[var(--color-borde)]"
                   style={{
                     aspectRatio:
                       h.formato === "vertical"
@@ -233,7 +234,18 @@ export default async function Caso({
                         : "4 / 3",
                   }}
                 >
-                  <Placeholder formato={h.formato} compacto />
+                  {/* Su tarjeta real. Antes iba un marcador gris, que
+                      en la página de un caso terminado se leía como un
+                      trabajo a medias. */}
+                  {h.tarjeta ? (
+                    <Grafico
+                      src={h.tarjeta}
+                      sizes="(max-width: 640px) 100vw, 33vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                    />
+                  ) : (
+                    <Placeholder formato={h.formato} compacto />
+                  )}
                 </div>
                 <p className="mt-3 text-[10px] uppercase tracking-[0.16em] text-[var(--color-menta)]">
                   {RUBROS.find((r) => r.id === h.rubro)?.corto}

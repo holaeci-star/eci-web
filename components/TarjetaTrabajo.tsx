@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Grafico from "./Grafico";
 import Placeholder from "./Placeholder";
-import { MEDIDAS, iniciales, type Pieza } from "@/lib/content";
+import { iniciales, type Pieza } from "@/lib/content";
 import { urlMedia } from "@/lib/media";
 
 /* La tarjeta de un trabajo.
@@ -69,7 +69,6 @@ export default function TarjetaTrabajo({
      queda montada; no tiene sentido volver a descargarla. */
   const [tocada, setTocada] = useState(false);
   const video = useRef<HTMLVideoElement>(null);
-  const medidas = MEDIDAS[p.formato];
 
   const alEntrar = () => {
     setHover(true);
@@ -103,7 +102,6 @@ export default function TarjetaTrabajo({
     p.media.tipo === "local"
       ? (p.media as { src: string }).src
       : p.tarjetaHoverVideo;
-  const esVideoLocal = p.media.tipo === "local";
 
   return (
     <Link
@@ -163,14 +161,11 @@ export default function TarjetaTrabajo({
            ilegible. Sobre material oscuro no se nota la diferencia. */}
         <div className="absolute inset-x-0 bottom-0 h-[62%] bg-gradient-to-t from-[var(--color-profundo)] via-[color-mix(in_srgb,#111827_78%,transparent)] to-transparent" />
 
-        {/* Etiqueta de medidas — para juzgar tamaños de un vistazo */}
-        <span className="absolute top-3 left-3 rounded-full bg-[color-mix(in_srgb,var(--color-profundo)_75%,transparent)] px-2.5 py-1 text-[10px] tracking-wider text-[var(--color-menta)] backdrop-blur-sm">
-          {medidas.w} × {medidas.h}
-        </span>
-
-        {esVideoLocal && (
-          <span className="absolute top-3 right-3 rounded-full bg-[color-mix(in_srgb,var(--color-naranja)_85%,transparent)] px-2.5 py-1 text-[10px] font-medium tracking-wider text-[var(--color-profundo)]">
-            {(p.media as { pesoMB: number }).pesoMB} MB
+        {/* La técnica, arriba, solo en los animados: es la excepción y
+            distingue dos oficios que se ven parecidos en miniatura. */}
+        {p.tecnica === "animacion" && (
+          <span className="absolute left-3 top-3 rounded-full bg-[color-mix(in_srgb,#111827_75%,transparent)] px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] text-[var(--color-menta)] backdrop-blur-sm">
+            Animación
           </span>
         )}
 

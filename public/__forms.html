@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Definición de formularios</title>
+    <meta name="robots" content="noindex" />
+  </head>
+  <body>
+    <!--
+      Esta página no es para nadie. Existe solo para que Netlify sepa
+      que el sitio tiene un formulario.
+
+      Netlify detecta formularios leyendo el HTML publicado durante la
+      compilación, y las páginas de Next.js no se publican como HTML
+      suelto: las sirve el runtime del framework. Resultado: el
+      formulario de /contacto, por bien escrito que esté, no se
+      registra nunca y los envíos caen en el vacío.
+
+      La solución que documenta Netlify para Next.js es justo esta,
+      un archivo estático en public/ con la definición del formulario.
+      El formulario real de /contacto envía aquí por POST.
+
+      REGLA: si se agrega o se renombra un campo en
+      components/FormularioContacto.tsx, hay que agregarlo también
+      aquí, o ese dato no llega al buzón.
+    -->
+    <form name="contacto" data-netlify="true" data-netlify-honeypot="empresa-web" hidden>
+      <input type="hidden" name="form-name" value="contacto" />
+      <input type="text" name="nombre" />
+      <input type="text" name="marca" />
+      <input type="text" name="contacto" />
+      <input type="text" name="tipo" />
+      <input type="text" name="presupuesto" />
+      <textarea name="mensaje"></textarea>
+      <input type="text" name="empresa-web" />
+    </form>
+  </body>
+</html>

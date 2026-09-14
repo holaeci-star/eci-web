@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { SERVICIOS, SITIO } from "@/lib/sitio";
+import { SERVICIOS, SITIO, INTRO_SERVICIOS } from "@/lib/sitio";
 import { visibles } from "@/lib/content";
 
 export const metadata = { title: "Servicios" };
@@ -14,29 +14,30 @@ export default function Servicios() {
   return (
     <section className="mx-auto max-w-[1100px] px-6 lg:px-10 py-14 md:py-20">
       <h1 className="display text-4xl md:text-6xl text-[var(--color-crema)] max-w-[14ch]">
-        Paquetes y precios
+        Servicios
       </h1>
       <p className="mt-5 max-w-2xl text-base md:text-lg leading-relaxed text-[color-mix(in_srgb,#eeebe3_75%,transparent)]">
-        {SITIO.promesa}
-      </p>
-      <p className="mt-4 max-w-2xl text-sm text-[var(--color-texto-tenue)]">
-        Los precios son de referencia y cada proyecto se ajusta a lo que
-        realmente necesita. Decidir si estos números se muestran en público
-        sigue pendiente en el documento maestro.
+        {INTRO_SERVICIOS}
       </p>
 
       <div className="mt-14 space-y-px bg-[var(--color-borde)] rounded-2xl overflow-hidden">
         {SERVICIOS.map((s) => {
           const ejemplos = visibles().filter((p) => p.servicios.includes(s.id)).slice(0, 3);
           return (
-            <div key={s.id} className="bg-[var(--color-fondo)] p-6 md:p-10">
+            /* El id ancla cada servicio: la portada enlaza directo al
+               desglose del que se picó, no al principio de la página. */
+            <div
+              key={s.id}
+              id={s.id}
+              className="scroll-mt-24 bg-[var(--color-fondo)] p-6 md:p-10"
+            >
               <div className="grid gap-8 md:grid-cols-[1fr_1.4fr]">
                 <div>
                   <span
                     className="text-[10px] uppercase tracking-[0.22em]"
                     style={{ color: ACENTO[s.acento] }}
                   >
-                    Pilar {s.pilar}
+                    {s.familia}
                   </span>
                   <h2 className="display mt-3 text-2xl md:text-3xl text-[var(--color-crema)]">
                     {s.nombre}
@@ -44,13 +45,7 @@ export default function Servicios() {
                   <p className="mt-3 text-sm leading-relaxed text-[color-mix(in_srgb,#eeebe3_75%,transparent)]">
                     {s.promesa}
                   </p>
-                  <p
-                    className="display-suave mt-6 text-2xl"
-                    style={{ color: ACENTO[s.acento] }}
-                  >
-                    {s.precio}
-                  </p>
-                  <p className="mt-4 text-xs leading-relaxed text-[var(--color-texto-tenue)]">
+                  <p className="mt-6 text-xs leading-relaxed text-[var(--color-texto-tenue)]">
                     <span className="uppercase tracking-[0.16em]">Para quién · </span>
                     {s.paraQuien}
                   </p>
