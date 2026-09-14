@@ -339,6 +339,21 @@ function Interfaz({
             <p className="mt-2 max-w-xl text-sm text-[color-mix(in_srgb,#eeebe3_78%,transparent)]">
               {pieza.resumen}
             </p>
+            {/* Quién lo hizo.
+
+                Los casos lo enseñan en su propia sección al cierre,
+                pero un reel no tiene caso: vive aquí y en ningún otro
+                lado. Los créditos estaban escritos en la ficha desde
+                hace rato sin que nadie pudiera verlos. Van en una
+                línea, chicos y tenues, porque el protagonista es el
+                video; pero van, que para eso se acreditan. */}
+            {pieza.colaboradores && pieza.colaboradores.length > 0 && (
+              <p className="mt-3 text-[11px] text-[color-mix(in_srgb,#eeebe3_55%,transparent)]">
+                {pieza.colaboradores
+                  .map((c) => `${c.rol}: ${c.nombre}`)
+                  .join("  ·  ")}
+              </p>
+            )}
             {pieza.metricas.length > 0 && (
               <div className="mt-4 flex flex-wrap gap-x-8 gap-y-2">
                 {pieza.metricas.map((m) => (

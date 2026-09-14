@@ -9,8 +9,10 @@ export const SITIO = {
   nombre: "ECI",
   nombreLargo: "Espacio de Creación e Innovación",
 
-  // Tagline favorita del documento de identidad, sección 03.
-  tagline: "El talento que empieza haciendo crecer negocios reales",
+  /* El titular del hero. Se guarda en minúsculas aunque se lea en
+     versalitas: el mayusculeo lo pone la tipografía de titulares, y
+     así el mismo texto sirve para el título de la pestaña sin gritar. */
+  tagline: "Soluciones creativas que hacen crecer negocios reales",
   taglineCorta: "Lo justo para resultados grandes",
 
   // Del manifiesto citado en la Alineación.
@@ -33,8 +35,7 @@ export const SITIO = {
   instagram: "@eci.estudio",
   instagramUrl: "https://www.instagram.com/eci.estudio/",
   facebookUrl: "https://www.facebook.com/profile.php?id=61593985541605",
-  // PENDIENTE de confirmar: la lada 614 es de Chihuahua.
-  ciudad: "Chihuahua, México",
+  ciudad: "Guadalajara, Jalisco",
 };
 
 /* Introducción de la página de Servicios. Es de las pocas frases que
