@@ -133,6 +133,11 @@ export type Pieza = {
   formato: Formato;
   anio: number;
   resumen: string;
+  /* Dónde se lee el resumen dentro del caso. Por omisión va pegado al
+     título, antes de la portada. Las identidades exprés lo quieren
+     después: ahí la portada es el logotipo terminado y conviene verlo
+     antes de que nadie te lo explique. */
+  resumenDespuesDePortada?: boolean;
   /* Contexto general del proyecto: un título y el párrafo que lo
      acompaña. Sustituye al bloque de tres métricas en el caso. */
   contexto?: { titulo: string; parrafos: string[] };
@@ -162,6 +167,9 @@ export const LOGOS_CLIENTE: Record<string, string> = {
   "Don Neto": "/clientes/don-neto.svg",
   Minturina: "/clientes/minturina.svg",
   Shiny: "/clientes/shiny.svg",
+  /* De las cuatro exprés solo Klevers va aquí: las tres marcas de
+     Kevin se quedan fuera de la franja por decisión del cliente. */
+  Klevers: "/clientes/klevers.svg",
 };
 
 /* "A", "A y B", "A, B y C" — para créditos que se leen como frase */
@@ -1158,20 +1166,34 @@ export const PIEZAS: Pieza[] = [
   },
 
   /* ─── MARCA EXPRÉS ─── */
+  /* ═══════════════════════════════════════════════════════════════
+     MARCA EXPRÉS · cuatro proyectos
+
+     Klevers lleva su propia maquetación —texturas y la presentación
+     de ventas, que es el entregable— y las tres de Kevin comparten
+     una: el antes y el después del logotipo, el sistema mínimo y las
+     fotos que se fueron a la web.
+     ═══════════════════════════════════════════════════════════════ */
   {
     slug: "klevers-identidad-express",
     titulo: "Arranque de marca Klevers",
     cliente: "Klevers",
-    clienteId: "18_KLEVERS",
-    categoria: "Consultoría",
+    clienteId: "15_KLEVERS",
+    categoria: "Inversiones y finanzas",
+    logo: "/trabajo/klevers-identidad-express/logo.svg",
+    logoLleno: true,
+    portada: "/trabajo/klevers-identidad-express/portada.jpg",
+    tarjeta: "/trabajo/klevers-identidad-express/tarjeta.svg",
+    tarjetaHover: "/trabajo/klevers-identidad-express/tarjeta-hover.jpg",
     rubro: "marca-express",
     formato: "estatico",
-    anio: 2026,
-    resumen: "De cero a redes listas para publicar, en una semana.",
+    anio: 2025,
+    resumen: "Identidad exprés para realizar una presentación de ventas.",
     contexto: {
-      titulo: "Verse serio el lunes siguiente",
+      titulo: "Sobre el proyecto",
       parrafos: [
-        "Klevers necesitaba abrir redes con cara de negocio establecido antes de su primera campaña de pauta. No pedía un sistema de marca completo: pedía dejar de verse improvisado antes de gastar en publicidad.",
+        "El objetivo era crear una presentación de ventas que dejara ver de forma sencilla y elegante el modelo de negocio que propone la marca para invertir en ella.",
+        "Llegaron sin un logo vectorizado ni una identidad de marca, y además con poco tiempo para tener la presentación lista. Nos enfocamos en lo más indispensable para cumplir ese objetivo.",
       ],
     },
     descripcion: [],
@@ -1179,25 +1201,234 @@ export const PIEZAS: Pieza[] = [
     metricas: [],
     modulos: [
       {
+        tipo: "completa",
+        imagen: { w: 1921, h: 1081, src: "/trabajo/klevers-identidad-express/galeria/01-textura-1.jpg", pie: "La textura principal" },
+      },
+      {
         tipo: "cuadricula",
         imagenes: [
-          { w: 2400, h: 2400, pie: "Logotipo y reducción" },
-          { w: 3000, h: 2000, pie: "Paleta" },
+          { w: 1505, h: 1506, src: "/trabajo/klevers-identidad-express/galeria/02-textura-2.jpg", pie: "Textura" },
+          { w: 1504, h: 1506, src: "/trabajo/klevers-identidad-express/galeria/03-textura-3.jpg", pie: "Textura" },
         ],
       },
       {
         tipo: "cuadricula",
         imagenes: [
-          { w: 1500, h: 2668, pie: "Perfil aplicado" },
-          { w: 2000, h: 2000, pie: "Primer post anclado" },
+          { w: 1504, h: 1506, src: "/trabajo/klevers-identidad-express/galeria/04-textura-4.jpg", pie: "Textura" },
+          { w: 1505, h: 1506, src: "/trabajo/klevers-identidad-express/galeria/05-textura-5.jpg", pie: "Textura" },
         ],
+      },
+      {
+        tipo: "texto",
+        titulo: "Dirección",
+        parrafos: [
+          "Lo principal a transmitir fue riqueza, pero desde un punto donde la abundancia y lo aspiracional fueran lo primero.",
+          "Así elegimos un nuevo degradado de oro para el logo, texturas que juegan con la luz y unas tarjetas sólidas para presentar la información.",
+        ],
+      },
+      /* La presentación cierra el caso y va a lo ancho, en orden: es
+         el entregable, y una diapositiva se lee completa o no se lee. */
+      {
+        tipo: "completa",
+        imagen: { w: 1920, h: 1080, src: "/trabajo/klevers-identidad-express/galeria/06-diapositiva-1.jpg", pie: "La presentación de ventas" },
+      },
+      {
+        tipo: "completa",
+        imagen: { w: 1920, h: 1080, src: "/trabajo/klevers-identidad-express/galeria/07-diapositiva-2.jpg" },
+      },
+      {
+        tipo: "completa",
+        imagen: { w: 1920, h: 1080, src: "/trabajo/klevers-identidad-express/galeria/08-diapositiva-3.jpg" },
+      },
+      {
+        tipo: "completa",
+        imagen: { w: 1920, h: 1080, src: "/trabajo/klevers-identidad-express/galeria/09-diapositiva-4.jpg" },
+      },
+      {
+        tipo: "completa",
+        imagen: { w: 1920, h: 1080, src: "/trabajo/klevers-identidad-express/galeria/10-diapositiva-5.jpg" },
+      },
+    ],
+    destacado: true,
+    orden: 8,
+    media: { tipo: "ninguno" },
+    galeria: 0,
+    demo: false,
+  },
+  {
+    slug: "aneu-identidad-express",
+    titulo: "Identidad Aneu",
+    cliente: "Aneu",
+    clienteId: "16_KEVIN_EMPRESA_1",
+    categoria: "Inversiones y finanzas",
+    logo: "/trabajo/aneu-identidad-express/logo.svg",
+    logoLleno: true,
+    portada: "/trabajo/aneu-identidad-express/portada.jpg",
+    tarjeta: "/trabajo/aneu-identidad-express/tarjeta.svg",
+    tarjetaHover: "/trabajo/aneu-identidad-express/tarjeta-hover.jpg",
+    rubro: "marca-express",
+    formato: "estatico",
+    anio: 2025,
+    resumen:
+      "Vectorización y creación de identidad exprés para lanzar la empresa a la web.",
+    /* La portada es el logotipo terminado: se ve antes de leerlo */
+    resumenDespuesDePortada: true,
+    descripcion: [],
+    servicios: ["identidad-express"],
+    metricas: [],
+    modulos: [
+      {
+        /* El antes y el después, enfrentados: es la comparación la que
+           cuenta el trabajo, no cada uno por su lado. */
+        tipo: "cuadricula",
+        imagenes: [
+          { w: 1504, h: 1507, src: "/trabajo/aneu-identidad-express/galeria/01-logo-antes.jpg", pie: "El logotipo como llegó" },
+          { w: 1505, h: 1507, src: "/trabajo/aneu-identidad-express/galeria/02-logo-despues.jpg", pie: "El logotipo vectorizado" },
+        ],
+      },
+      {
+        tipo: "completa",
+        imagen: { w: 1921, h: 1081, src: "/trabajo/aneu-identidad-express/galeria/03-reducciones.jpg", pie: "Reducciones" },
+      },
+      {
+        tipo: "texto",
+        titulo: "Sobre el proyecto",
+        parrafos: ["Este proyecto surge de la necesidad de la empresa por crear una web para mantener su negocio de forma digital. Tenían un logo, pero faltaba todo lo demás.","Vectorizamos, seleccionamos colores y tipografías, y terminamos con la edición de las imágenes que después irían en la web."],
+      },
+      {
+        tipo: "cuadricula",
+        imagenes: [
+          { w: 1505, h: 1506, src: "/trabajo/aneu-identidad-express/galeria/04-tipografias.jpg", pie: "Tipografías" },
+          { w: 1504, h: 1506, src: "/trabajo/aneu-identidad-express/galeria/05-colores.jpg", pie: "Paleta" },
+        ],
+      },
+      {
+        tipo: "completa",
+        imagen: { w: 1921, h: 1081, src: "/trabajo/aneu-identidad-express/galeria/06-fotografias.jpg", pie: "Las imágenes que fueron a la web" },
       },
     ],
     destacado: false,
     orden: 9,
     media: { tipo: "ninguno" },
     galeria: 0,
-    demo: true,
+    demo: false,
+  },
+  {
+    slug: "alis-identidad-express",
+    titulo: "Identidad Alis",
+    cliente: "Alis",
+    clienteId: "17_KEVIN_EMPRESA_2",
+    categoria: "Consultoría administrativa",
+    logo: "/trabajo/alis-identidad-express/logo.svg",
+    logoLleno: true,
+    portada: "/trabajo/alis-identidad-express/portada.jpg",
+    tarjeta: "/trabajo/alis-identidad-express/tarjeta.svg",
+    tarjetaHover: "/trabajo/alis-identidad-express/tarjeta-hover.jpg",
+    rubro: "marca-express",
+    formato: "estatico",
+    anio: 2025,
+    resumen:
+      "Vectorización y creación de identidad exprés para lanzar la empresa a la web.",
+    /* La portada es el logotipo terminado: se ve antes de leerlo */
+    resumenDespuesDePortada: true,
+    descripcion: [],
+    servicios: ["identidad-express"],
+    metricas: [],
+    modulos: [
+      {
+        /* El antes y el después, enfrentados: es la comparación la que
+           cuenta el trabajo, no cada uno por su lado. */
+        tipo: "cuadricula",
+        imagenes: [
+          { w: 1505, h: 1507, src: "/trabajo/alis-identidad-express/galeria/01-logo-antes.jpg", pie: "El logotipo como llegó" },
+          { w: 1504, h: 1507, src: "/trabajo/alis-identidad-express/galeria/02-logo-despues.jpg", pie: "El logotipo vectorizado" },
+        ],
+      },
+      {
+        tipo: "completa",
+        imagen: { w: 1921, h: 1081, src: "/trabajo/alis-identidad-express/galeria/03-reducciones.jpg", pie: "Variaciones del logotipo" },
+      },
+      {
+        tipo: "texto",
+        titulo: "Sobre el proyecto",
+        parrafos: ["Este proyecto forma parte de una cadena de marcas que necesitaban una web para mantener su negocio de forma digital. Tenían un logo, pero faltaba todo lo demás.","Vectorizamos, seleccionamos colores y tipografías, y terminamos con la edición de las imágenes que después irían en la web."],
+      },
+      {
+        tipo: "cuadricula",
+        imagenes: [
+          { w: 1504, h: 1506, src: "/trabajo/alis-identidad-express/galeria/04-tipografias.jpg", pie: "Tipografías" },
+          { w: 1505, h: 1506, src: "/trabajo/alis-identidad-express/galeria/05-colores.jpg", pie: "Paleta" },
+        ],
+      },
+      {
+        tipo: "completa",
+        imagen: { w: 1921, h: 1081, src: "/trabajo/alis-identidad-express/galeria/06-fotografias.jpg", pie: "Las imágenes que fueron a la web" },
+      },
+    ],
+    destacado: false,
+    orden: 10,
+    media: { tipo: "ninguno" },
+    galeria: 0,
+    demo: false,
+  },
+  {
+    slug: "emp-identidad-express",
+    titulo: "Identidad EMP",
+    cliente: "EMP",
+    clienteId: "18_KEVIN_EMPRESA_3",
+    categoria: "Proyectos electromecánicos",
+    logo: "/trabajo/emp-identidad-express/logo.svg",
+    logoLleno: true,
+    portada: "/trabajo/emp-identidad-express/portada.jpg",
+    tarjeta: "/trabajo/emp-identidad-express/tarjeta.svg",
+    tarjetaHover: "/trabajo/emp-identidad-express/tarjeta-hover.jpg",
+    rubro: "marca-express",
+    formato: "estatico",
+    anio: 2025,
+    resumen:
+      "Vectorización y creación de identidad exprés para lanzar la empresa a la web.",
+    /* La portada es el logotipo terminado: se ve antes de leerlo */
+    resumenDespuesDePortada: true,
+    descripcion: [],
+    servicios: ["identidad-express"],
+    metricas: [],
+    modulos: [
+      {
+        /* El antes y el después, enfrentados: es la comparación la que
+           cuenta el trabajo, no cada uno por su lado. */
+        tipo: "cuadricula",
+        imagenes: [
+          { w: 1504, h: 1507, src: "/trabajo/emp-identidad-express/galeria/01-logo-antes.jpg", pie: "El logotipo como llegó" },
+          { w: 1504, h: 1507, src: "/trabajo/emp-identidad-express/galeria/02-logo-despues.jpg", pie: "El logotipo vectorizado" },
+        ],
+      },
+      {
+        tipo: "completa",
+        imagen: { w: 1921, h: 1081, src: "/trabajo/emp-identidad-express/galeria/03-reducciones.jpg", pie: "Reducciones" },
+      },
+      {
+        tipo: "texto",
+        titulo: "Sobre el proyecto",
+        parrafos: ["Este proyecto forma parte de una cadena de marcas que necesitaban una web para mantener su negocio de forma digital. Tenían un logo, pero faltaba todo lo demás.","Vectorizamos, seleccionamos colores y tipografías, y terminamos con la edición de las imágenes que después irían en la web."],
+      },
+      {
+        tipo: "cuadricula",
+        imagenes: [
+          { w: 1504, h: 1506, src: "/trabajo/emp-identidad-express/galeria/04-tipografias.jpg", pie: "Tipografías" },
+          { w: 1504, h: 1506, src: "/trabajo/emp-identidad-express/galeria/05-colores.jpg", pie: "Paleta" },
+        ],
+      },
+      {
+        tipo: "completa",
+        imagen: { w: 1921, h: 1081, src: "/trabajo/emp-identidad-express/galeria/06-fotografias.jpg", pie: "Las imágenes que fueron a la web" },
+      },
+    ],
+    cierre: "Fueron más de diez proyectos para crear la identidad y los recursos de estas marcas en menos de un mes. Adaptamos los procesos y los esfuerzos para poner atención en lo que era más importante, y así lograrlo.",
+    destacado: false,
+    orden: 11,
+    media: { tipo: "ninguno" },
+    galeria: 0,
+    demo: false,
   },
 
   /* ═══════════════════════════════════════════════════════════════

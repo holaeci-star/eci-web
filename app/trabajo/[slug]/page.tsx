@@ -25,6 +25,14 @@ export function generateStaticParams() {
     .map((p) => ({ slug: p.slug }));
 }
 
+function Resumen({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="max-w-2xl text-lg leading-relaxed text-[color-mix(in_srgb,#eeebe3_78%,transparent)]">
+      {children}
+    </p>
+  );
+}
+
 function CajaLogo({ pieza, tam = 44 }: { pieza: Pieza; tam?: number }) {
   return (
     <span
@@ -99,10 +107,11 @@ export default async function Caso({
           {p.titulo}
         </h1>
 
-        {/* Descripción muy breve */}
-        <p className="mt-5 max-w-2xl text-lg leading-relaxed text-[color-mix(in_srgb,#eeebe3_78%,transparent)]">
-          {p.resumen}
-        </p>
+        {/* Descripción muy breve. Por omisión va aquí, pegada al
+            título; las identidades exprés la piden después de la
+            portada, porque ahí la portada es el logotipo terminado y
+            se lee mejor antes de que nadie lo explique. */}
+        {!p.resumenDespuesDePortada && <Resumen>{p.resumen}</Resumen>}
       </header>
 
       {/* ── Portada ── */}
@@ -126,6 +135,12 @@ export default async function Caso({
           </div>
         )}
       </div>
+
+      {p.resumenDespuesDePortada && (
+        <div className="mt-8">
+          <Resumen>{p.resumen}</Resumen>
+        </div>
+      )}
 
       {/* ── Contexto general del proyecto ──
           Sustituye al bloque de tres métricas: un título con el párrafo
