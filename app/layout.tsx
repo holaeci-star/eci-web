@@ -14,6 +14,11 @@ import { SITIO } from "@/lib/sitio";
    completa. Las redes descartan las rutas relativas, así que sin esa
    línea la imagen no aparece por más que exista el archivo.
 
+   La descripción es la tagline y no la propuesta de valor larga: en
+   la tarjeta de un enlace solo caben dos renglones, y el párrafo de
+   la promesa se cortaba a media frase. Una línea que se lee entera
+   dice más que tres que se truncan.
+
    Cada página puede escribir encima lo suyo —los casos ponen su
    propia portada—; esto es lo que se usa cuando no lo hace. */
 export const metadata: Metadata = {
@@ -22,13 +27,13 @@ export const metadata: Metadata = {
     default: `${SITIO.nombre} — ${SITIO.nombreLargo}`,
     template: `%s · ${SITIO.nombre}`,
   },
-  description: SITIO.promesa,
+  description: SITIO.tagline,
   openGraph: {
     type: "website",
     locale: "es_MX",
     siteName: SITIO.nombre,
     title: `${SITIO.nombre} — ${SITIO.nombreLargo}`,
-    description: SITIO.promesa,
+    description: SITIO.tagline,
     images: [{ url: "/og.jpg", width: 1200, height: 630, alt: SITIO.nombreLargo }],
   },
   twitter: { card: "summary_large_image" },
