@@ -36,7 +36,7 @@ export default function Colaboradores({ lista }: { lista: Colaborador[] }) {
   return (
     <section className="mt-16 border-t border-[var(--color-borde)] pt-10">
       <h2 className="text-xs uppercase tracking-[0.2em] text-[var(--color-texto-tenue)]">
-        Quién lo hizo
+        Colaboradores
       </h2>
 
       <ul className="mt-6 grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
