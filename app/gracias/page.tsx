@@ -1,7 +1,13 @@
 import Link from "next/link";
 import { SITIO } from "@/lib/sitio";
 
-export const metadata = { title: "Gracias" };
+export const metadata = {
+  title: "Gracias",
+  description: "Recibimos tu mensaje.",
+  /* Es el acuse del formulario, no una página del sitio: no tiene
+     sentido que salga en buscadores ni que alguien la comparta. */
+  robots: { index: false, follow: false },
+};
 
 /* A dónde cae el formulario de contacto después de enviarse.
 

@@ -3,12 +3,35 @@ import "./globals.css";
 import Nav from "@/components/Nav";
 import { SITIO } from "@/lib/sitio";
 
+/* Cómo se ve un enlace del sitio cuando alguien lo comparte.
+
+   WhatsApp, Instagram, Slack, Facebook y los buscadores no abren la
+   página: leen estas etiquetas y con ellas arman la tarjeta del
+   enlace. Sin ellas el recuadro sale con puro texto y repitiendo en
+   todas las páginas la misma descripción genérica.
+
+   `metadataBase` es lo que convierte /og.jpg en una dirección
+   completa. Las redes descartan las rutas relativas, así que sin esa
+   línea la imagen no aparece por más que exista el archivo.
+
+   Cada página puede escribir encima lo suyo —los casos ponen su
+   propia portada—; esto es lo que se usa cuando no lo hace. */
 export const metadata: Metadata = {
+  metadataBase: new URL("https://eci-portafolio.netlify.app"),
   title: {
     default: `${SITIO.nombre} — ${SITIO.nombreLargo}`,
     template: `%s · ${SITIO.nombre}`,
   },
   description: SITIO.promesa,
+  openGraph: {
+    type: "website",
+    locale: "es_MX",
+    siteName: SITIO.nombre,
+    title: `${SITIO.nombre} — ${SITIO.nombreLargo}`,
+    description: SITIO.promesa,
+    images: [{ url: "/og.jpg", width: 1200, height: 630, alt: SITIO.nombreLargo }],
+  },
+  twitter: { card: "summary_large_image" },
 };
 
 export default function RootLayout({

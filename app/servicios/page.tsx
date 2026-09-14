@@ -2,7 +2,11 @@ import Link from "next/link";
 import { SERVICIOS, SITIO, INTRO_SERVICIOS } from "@/lib/sitio";
 import { visibles } from "@/lib/content";
 
-export const metadata = { title: "Servicios" };
+export const metadata = {
+  title: "Servicios",
+  description:
+    "Contenido vertical, audiovisual comercial, identidad de marca y fotografía. Los paquetes son una guía: cada proyecto se ajusta a lo que necesita.",
+};
 
 const ACENTO: Record<string, string> = {
   menta: "var(--color-menta)",

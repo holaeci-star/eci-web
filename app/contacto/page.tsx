@@ -1,7 +1,11 @@
 import FormularioContacto from "@/components/FormularioContacto";
 import { SITIO } from "@/lib/sitio";
 
-export const metadata = { title: "Contacto" };
+export const metadata = {
+  title: "Contacto",
+  description:
+    "Cuéntanos cómo te podemos apoyar. Cinco campos bastan para saber si podemos ayudarte y con qué paquete empezar.",
+};
 
 export default function Contacto() {
   return (

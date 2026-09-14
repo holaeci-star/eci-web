@@ -1,7 +1,11 @@
 import { Suspense } from "react";
 import Rejilla from "@/components/Rejilla";
 
-export const metadata = { title: "Trabajo" };
+export const metadata = {
+  title: "Trabajo",
+  description:
+    "Identidad de marca, contenido vertical y fotografía para negocios reales. Una selección de proyectos de ECI.",
+};
 
 export default function Trabajo() {
   return (

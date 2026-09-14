@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import Link from "next/link";
 import Grafico from "@/components/Grafico";
@@ -25,6 +26,35 @@ export function generateStaticParams() {
   return visibles()
     .filter((p) => p.rubro !== "reels")
     .map((p) => ({ slug: p.slug }));
+}
+
+/* Compartir un caso enseña ese caso.
+
+   Sin esto, mandar el enlace de Don Neto por WhatsApp pintaba la misma
+   tarjeta que mandar el de Minturina: el logotipo de ECI y la promesa
+   del estudio. La portada y el resumen del proyecto ya están escritos
+   en su ficha; aquí solo se le pasan a quien dibuja la tarjeta. */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const p = piezaPorSlug(slug);
+  if (!p || !esVisible(p)) return {};
+
+  const titulo = `${p.titulo} — ${p.cliente}`;
+  const imagen = p.portada ?? p.tarjeta;
+
+  return {
+    title: p.titulo,
+    description: p.resumen,
+    openGraph: {
+      title: titulo,
+      description: p.resumen,
+      images: imagen ? [{ url: urlMedia(imagen), alt: titulo }] : undefined,
+    },
+  };
 }
 
 function Resumen({ children }: { children: React.ReactNode }) {
