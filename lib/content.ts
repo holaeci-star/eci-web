@@ -234,15 +234,18 @@ export const SECCIONES: {
   id: string;
   corto: string;
   rubros: Rubro[];
-  /* Una sección que en vez de filtrar la rejilla lleva a otra parte.
-     Reels es la única: sus piezas son verticales de quince segundos y
-     se ven mejor en el reproductor a pantalla completa que en una
-     cuadrícula de miniaturas mudas. La separación entre grabado y
-     animado se mudó ahí dentro con ellas. */
-  directo?: string;
+  /* Reels se subdivide por cómo se hizo la pieza, no por rubro: son
+     todas el mismo servicio, pero grabar y animar son oficios
+     distintos y quien busca uno rara vez quiere el otro.
+
+     La cuadrícula es la puerta y el reproductor es el destino, y el
+     filtro existe en los dos: se elige antes de entrar y se puede
+     cambiar ya estando adentro. Lo que se elija de un lado se
+     respeta del otro, en ambos sentidos. */
+  porTecnica?: boolean;
 }[] = [
   { id: "marca", corto: "Marca", rubros: ["marca", "marca-express"] },
-  { id: "reels", corto: "Reels", rubros: ["reels"], directo: "/reels" },
+  { id: "reels", corto: "Reels", rubros: ["reels"], porTecnica: true },
   { id: "comercial", corto: "Comercial", rubros: ["comercial"] },
   { id: "foto", corto: "Foto", rubros: ["foto"] },
   { id: "diseno", corto: "Diseño", rubros: ["diseno"] },

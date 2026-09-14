@@ -29,13 +29,7 @@ const FILTROS: { id: Tecnica | "todos"; nombre: string }[] = [
 ];
 
 export default function FeedReels({ inicial }: { inicial?: string }) {
-  /* A dónde regresa el botón de cerrar. Quien abrió el reel manda la
-     ruta con el filtro que tenía puesto; si nadie la manda, se vuelve
-     al listado de trabajo, que es el menú donde se puede cambiar de
-     sección. */
   const params = useSearchParams();
-  const regreso = params.get("volver") ?? "/trabajo";
-
   const t = params.get("tecnica");
   const tecnicaInicial: Tecnica | "todos" =
     t === "live-action" || t === "animacion" ? t : "todos";
@@ -45,6 +39,30 @@ export default function FeedReels({ inicial }: { inicial?: string }) {
     t === "todos" ? TODOS : TODOS.filter((p) => (p.tecnica ?? "live-action") === t);
 
   const lista = useMemo(() => filtrar(tecnica), [tecnica]);
+
+  /* A dónde regresa el botón de salir. Quien abrió el reel manda la
+     ruta de la cuadrícula con el filtro que tenía puesto; si nadie la
+     manda, se vuelve al listado de trabajo.
+
+     Si aquí dentro se cambia de técnica, el regreso cambia con ella:
+     quien entró por Live action y se pasó a Animación quiere salir a
+     la cuadrícula de animación, que es lo que acaba de estar viendo,
+     no a la que traía al entrar. El filtro es uno solo, esté de un
+     lado o del otro. */
+  const regresoBase = params.get("volver") ?? "/trabajo";
+  const regreso = useMemo(() => {
+    try {
+      const u = new URL(regresoBase, "http://local");
+      if (u.pathname === "/trabajo" && u.searchParams.get("seccion") === "reels") {
+        if (tecnica === "todos") u.searchParams.delete("sub");
+        else u.searchParams.set("sub", tecnica);
+        return u.pathname + u.search;
+      }
+    } catch {
+      /* Una ruta que no se puede leer se devuelve tal cual */
+    }
+    return regresoBase;
+  }, [regresoBase, tecnica]);
 
   const contenedor = useRef<HTMLDivElement>(null);
   const slides = useRef<(HTMLDivElement | null)[]>([]);
@@ -56,7 +74,13 @@ export default function FeedReels({ inicial }: { inicial?: string }) {
     const i = filtrar(tecnicaInicial).findIndex((p) => p.slug === inicial);
     return i >= 0 ? i : 0;
   });
-  const [sonido, setSonido] = useState(false);
+  /* El feed arranca con sonido. Son piezas hechas para redes, con
+     diseño sonoro y música: mudas se juzgan a la mitad. El navegador
+     puede negarse —casi todos bloquean el autoplay con audio si no
+     hubo un gesto antes—, y para eso está la reserva de más abajo:
+     si la reproducción se rechaza se silencia, se reintenta y el
+     botón se pone en "Silencio", que es la verdad. */
+  const [sonido, setSonido] = useState(true);
   /* Videos que no cargaron: se sustituyen por el aviso */
   const [fallidos, setFallidos] = useState<Record<string, boolean>>({});
   /* Hasta que el video activo pueda reproducirse, ninguno de sus
@@ -96,22 +120,32 @@ export default function FeedReels({ inicial }: { inicial?: string }) {
       if (!v) return;
       if (i === activo) {
         v.muted = !sonido;
-        v.play().catch(() => {});
+        v.play().catch(() => {
+          /* Bloqueado por la política de autoplay: vale más el video
+             mudo que un cuadro congelado. */
+          if (!v.muted) {
+            v.muted = true;
+            setSonido(false);
+            v.play().catch(() => {});
+          }
+        });
       } else {
         v.pause();
       }
     });
     /* La URL sigue a la pieza visible, para que sea compartible. Se
-       conserva la consulta: ahí van el filtro y, sobre todo, a dónde
-       hay que volver — si se pierde, el botón de salir manda a otro
-       lado al recargar. */
+       conserva a dónde hay que volver y el filtro puesto: si se
+       pierden, recargar deja el reproductor sin salida y sin el
+       recorte que se estaba viendo. */
     const p = lista[activo];
     if (p) {
-      const q = window.location.search;
-      window.history.replaceState(null, "", `/reels/${p.slug}${q}`);
+      const q = new URLSearchParams();
+      q.set("volver", regresoBase);
+      if (tecnica !== "todos") q.set("tecnica", tecnica);
+      window.history.replaceState(null, "", `/reels/${p.slug}?${q}`);
     }
     setActivoListo(false);
-  }, [activo, sonido, lista]);
+  }, [activo, sonido, lista, regresoBase, tecnica]);
 
   /* Cambiar de técnica rearma el feed desde arriba: los índices que
      quedaban apuntaban a otras piezas. */

@@ -1,9 +1,15 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import TarjetaTrabajo from "./TarjetaTrabajo";
-import { visibles, seccionesActivas, RUBROS, type Rubro } from "@/lib/content";
+import {
+  visibles,
+  seccionesActivas,
+  RUBROS,
+  TECNICAS,
+  type Rubro,
+} from "@/lib/content";
 
 /* Rejilla asimétrica tipo bento.
 
@@ -15,48 +21,51 @@ import { visibles, seccionesActivas, RUBROS, type Rubro } from "@/lib/content";
 
 export default function Rejilla() {
   /* Dos niveles de filtro. El de arriba elige la sección; el de abajo
-     solo aparece donde hay algo que precisar —Marca se parte entre
-     completa y exprés—.
+     solo aparece donde hay algo que precisar: Marca se parte entre
+     completa y exprés, Reels entre grabado y animado.
 
-     El estado arranca de la URL —?seccion=marca&sub=marca-express—
-     para que quien entra a un proyecto y regresa caiga en el mismo
-     filtro del que salió, en vez de en el listado completo. */
+     El estado arranca de la URL —?seccion=reels&sub=animacion— para
+     que quien entra a una pieza y regresa caiga en el mismo filtro
+     del que salió, en vez de en el listado completo. */
   const params = useSearchParams();
-  const router = useRouter();
   const [seccion, setSeccion] = useState<string>(params.get("seccion") ?? "todos");
   const [sub, setSub] = useState<string>(params.get("sub") ?? "todos");
 
   const secciones = useMemo(() => seccionesActivas(), []);
   const activa = secciones.find((s) => s.id === seccion);
 
-  /* Qué se enseña en el segundo nivel: los rubros de la sección,
-     cuando son más de uno. */
-  const opciones =
-    !activa || activa.rubros.length < 2
-      ? []
-      : activa.rubros.map((r) => ({
-          id: r as string,
-          nombre: RUBROS.find((x) => x.id === r)?.corto ?? r,
-        }));
+  /* Qué se enseña en el segundo nivel: los rubros de la sección, o
+     las técnicas si la sección se divide así. */
+  const opciones = !activa
+    ? []
+    : activa.porTecnica
+    ? TECNICAS.map((t) => ({ id: t.id as string, nombre: t.nombre }))
+    : activa.rubros.length > 1
+    ? activa.rubros.map((r) => ({
+        id: r as string,
+        nombre: RUBROS.find((x) => x.id === r)?.corto ?? r,
+      }))
+    : [];
 
-  const enOpcion = (id: string) => visibles().filter((x) => x.rubro === id).length;
+  /* Cuántas piezas caen en una opción del segundo nivel */
+  const enOpcion = (id: string) =>
+    visibles().filter((x) =>
+      activa?.porTecnica
+        ? x.rubro === "reels" && (x.tecnica ?? "live-action") === id
+        : x.rubro === id
+    ).length;
 
   const lista = useMemo(() => {
     const todas = visibles();
     if (!activa) return todas;
     const deLaSeccion = todas.filter((x) => activa.rubros.includes(x.rubro));
-    return sub === "todos"
-      ? deLaSeccion
+    if (sub === "todos") return deLaSeccion;
+    return activa.porTecnica
+      ? deLaSeccion.filter((x) => (x.tecnica ?? "live-action") === sub)
       : deLaSeccion.filter((x) => x.rubro === sub);
   }, [activa, sub]);
 
-  /* Una sección puede no ser un filtro sino una puerta: Reels abre el
-     reproductor a pantalla completa en vez de reordenar la rejilla. */
-  const elegir = (id: string, directo?: string) => {
-    if (directo) {
-      router.push(`${directo}?volver=${encodeURIComponent("/trabajo")}`);
-      return;
-    }
+  const elegir = (id: string) => {
     setSeccion(id);
     setSub("todos");
   };
@@ -69,10 +78,16 @@ export default function Rejilla() {
   const volver = encodeURIComponent(
     `/trabajo?seccion=${seccion}${sub !== "todos" ? `&sub=${sub}` : ""}`
   );
-  const rutaDe = (x: { slug: string; rubro: string }) =>
-    x.rubro === "reels"
-      ? `/reels/${x.slug}?volver=${volver}`
-      : `/trabajo/${x.slug}?volver=${volver}`;
+
+  /* Un reel además se lleva puesto el filtro. Si se entró desde
+     Animación, el reproductor abre ya filtrado a animación y no con
+     el catálogo completo: deslizar hacia abajo tiene que seguir
+     enseñando lo que se estaba viendo, no otra cosa. */
+  const rutaDe = (x: { slug: string; rubro: string }) => {
+    if (x.rubro !== "reels") return `/trabajo/${x.slug}?volver=${volver}`;
+    const tecnica = activa?.porTecnica && sub !== "todos" ? `&tecnica=${sub}` : "";
+    return `/reels/${x.slug}?volver=${volver}${tecnica}`;
+  };
 
   return (
     <>
@@ -82,11 +97,7 @@ export default function Rejilla() {
           Todo <span className="opacity-50">{visibles().length}</span>
         </Boton>
         {secciones.map((sec) => (
-          <Boton
-            key={sec.id}
-            activo={seccion === sec.id}
-            onClick={() => elegir(sec.id, sec.directo)}
-          >
+          <Boton key={sec.id} activo={seccion === sec.id} onClick={() => elegir(sec.id)}>
             {sec.corto} <span className="opacity-50">{cuenta(sec.rubros)}</span>
           </Boton>
         ))}

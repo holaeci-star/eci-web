@@ -1,19 +1,13 @@
 import { redirect } from "next/navigation";
-import { reels } from "@/lib/content";
 
-/* Entrar a Reels es entrar al reproductor.
+/* Reels no tiene pantalla propia: vive dentro de Trabajo.
 
-   Había una pantalla intermedia con el catálogo en cuadrícula: se
-   elegía un reel y de ahí se pasaba al feed. Dos pasos para ver un
-   video de quince segundos, y una cuadrícula de miniaturas mudas que
-   compite mal con el formato al que el visitante ya está acostumbrado.
-   Ahora la categoría abre directo en el primero y desde ahí se
-   desliza; el filtro de grabado o animado se quedó dentro del feed.
-
-   La ruta sobrevive —el menú, la portada y cualquier enlace viejo
-   siguen apuntando aquí— y redirige del lado del servidor, así que no
-   hay parpadeo: el navegador nunca llega a pintar esta página. */
+   Tenía una, con su cuadrícula y su filtro, duplicando lo que la
+   sección de Trabajo ya hacía; eran dos listas del mismo material que
+   había que mantener iguales a mano. La ruta se queda —el menú, el
+   pilar de la portada y cualquier enlace viejo siguen apuntando
+   aquí— y redirige del lado del servidor, así que el navegador nunca
+   llega a pintar esta página. */
 export default function Reels() {
-  const primero = reels()[0];
-  redirect(primero ? `/reels/${primero.slug}?volver=/trabajo` : "/trabajo");
+  redirect("/trabajo?seccion=reels");
 }
