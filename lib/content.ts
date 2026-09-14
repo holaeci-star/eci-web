@@ -846,7 +846,9 @@ export const PIEZAS: Pieza[] = [
     ],
     cierre:
       "Este es un proyecto con alma y con mucha historia que tenía un gran potencial de ser contada. Trabajar y reestructurar la marca Don Neto fue un honor para ECI como estudio.",
-    colaboradores: [{ nombre: "Paul de la Riva", rol: "Fotografía" }],
+    colaboradores: [
+      { nombre: "Paul de la Riva", rol: "Fotografía", url: "https://www.instagram.com/lessspaul" },
+    ],
     destacado: true,
     orden: 7,
     media: { tipo: "ninguno" },
