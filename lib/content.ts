@@ -83,7 +83,20 @@ export type Imagen = {
    cada proyecto según lo que haya que contar. */
 export type Modulo =
   /* Dos imágenes recortadas a cuadrada, una al lado de la otra */
-  | { tipo: "cuadricula"; imagenes: [Imagen, Imagen] }
+  | {
+      tipo: "cuadricula";
+      imagenes: [Imagen, Imagen];
+      /* La caja de las dos. Por omisión cuadrada, que es como se
+         armaron los casos de marca: ahí las láminas y los mockups ya
+         venían recortados y el cuadrado ordena la página.
+
+         Una sesión fotográfica es otra cosa. Quince de las diecisiete
+         fotos de AleNails son verticales de 2:3, y cuadrarlas tira un
+         tercio de cada toma —justo el tercio donde el fotógrafo puso
+         el encuadre—. En fotografía la proporción es parte del
+         trabajo, no un detalle de maquetación. */
+      proporcion?: string;
+    }
   /* Una sola imagen que cubre el ancho de las dos anteriores */
   | { tipo: "completa"; imagen: Imagen; alto?: "normal" | "panoramico" | "cuadro" }
   /* Bloque de texto: título grande a la izquierda, párrafos a la
@@ -1479,41 +1492,34 @@ export const PIEZAS: Pieza[] = [
   },
 
   /* ═══════════════════════════════════════════════════════════════
-     FOTO · athypico34 — PRIMERA PIEZA CON MATERIAL REAL
-
-     Los textos son una PROPUESTA, escrita a partir de las imágenes.
-     Elihu los reescribe con lo que realmente se acordó con el cliente.
+     FOTO · athypico34
      ═══════════════════════════════════════════════════════════════ */
   {
     slug: "athypico34-producto",
     titulo: "Antes de la taza",
     cliente: "athypico34",
     clienteId: "01_ATHIPICO",
-    categoria: "Café de especialidad",
+    categoria: "Cafetería",
     rubro: "foto",
     formato: "estatico",
     anio: 2025,
     resumen:
-      "La molienda, la extracción y el vertido, fotografiados con la misma precisión con que se ejecutan.",
+      "Sesión exprés en el local, para que se vea la calidez y el cuidado que ponen en cada taza.",
     portada: "/trabajo/athypico34-producto/portada.jpg",
     tarjeta: "/trabajo/athypico34-producto/tarjeta.jpg",
     tarjetaHover: "/trabajo/athypico34-producto/tarjeta-hover.jpg",
     contexto: {
-      titulo: "El precio se explica solo si se ve",
+      titulo: "Una tarde, una luz",
       parrafos: [
-        "Un café de especialidad cuesta el doble que uno de cadena, y esa diferencia vive en pasos que el cliente nunca alcanza a ver: la molienda al gramo, la distribución pareja, los segundos exactos de extracción. athypico34 necesitaba mostrar ese trabajo sin caer en el catálogo de producto.",
-        "La sesión se resolvió como una secuencia de proceso y no como fotos sueltas: cada imagen es un momento del ritual, en el orden en que ocurre. La luz se mantuvo cálida y baja para que el metal y la madera conservaran su textura, y el fondo se dejó siempre fuera de foco para que nunca compitiera con las manos.",
+        "Fuimos al local, les preguntamos a los dueños qué querían contar y grabamos ahí mismo. Sin montar un set aparte: la cafetería siguió trabajando y las fotos salieron entre taza y taza.",
+        "Una sola luz de apoyo y el resto fue la del lugar, que es la que ya le da su carácter. Se ordenó como secuencia —cada imagen es un paso, en el orden en que ocurre— y todo se entregó el mismo día: rodaje y edición.",
       ],
     },
     descripcion: [],
     servicios: ["fotografia"],
     metricas: [],
-    /* CRÉDITOS DE EJEMPLO — nombres y enlaces inventados, para ver el
-       diseño. Sustituir por el equipo real de la sesión. */
     colaboradores: [
-      { nombre: "Elihu Arrieta", rol: "Dirección y fotografía", url: "https://instagram.com/eci.estudio" },
-      { nombre: "Nombre por definir", rol: "Asistencia de set" },
-      { nombre: "Nombre por definir", rol: "Retoque digital", url: "https://behance.net/" },
+      { nombre: "Elihu Arrieta", rol: "Dirección y fotografía", url: "https://www.instagram.com/eci.estudio/" },
     ],
     modulos: [
       {
@@ -1525,9 +1531,9 @@ export const PIEZAS: Pieza[] = [
       },
       {
         tipo: "texto",
-        titulo: "La molienda es la mitad del café",
+        titulo: "La molienda",
         parrafos: [
-          "El primer bloque de la secuencia se dedica al molino porque es donde se decide casi todo: el grosor, el peso exacto, la distribución dentro del portafiltro. Es también el paso menos vistoso, así que se fotografió en plano cerrado para que la textura del café molido cargara la imagen.",
+          "Es el paso que nadie ve y donde se decide casi todo: el grosor, el peso, cómo queda distribuido en el portafiltro. También es el menos vistoso, así que se cerró el plano para que la textura del café cargara la foto.",
         ],
         imagen: { w: 1333, h: 2000, src: "/trabajo/athypico34-producto/galeria/05.jpg", pie: "Molienda lista, antes del prensado" },
       },
@@ -1547,9 +1553,9 @@ export const PIEZAS: Pieza[] = [
       },
       {
         tipo: "texto",
-        titulo: "El vertido es lo que la gente fotografía",
+        titulo: "El vertido",
         parrafos: [
-          "El arte latte es el único paso que el cliente sí ve, y el que termina en redes. Se cubrió con dos tomas: el vertido en movimiento y la taza ya terminada, para que la marca tenga una imagen de proceso y otra de producto sin volver a montar el set.",
+          "Es el único paso que el cliente sí ve, y el que termina en redes. Se cubrió en movimiento y ya terminado, para que les quedara una imagen de proceso y otra de producto sin volver a montar nada.",
         ],
       },
       {
@@ -1569,6 +1575,370 @@ export const PIEZAS: Pieza[] = [
     ],
     destacado: true,
     orden: 9,
+    media: { tipo: "ninguno" },
+    galeria: 0,
+    demo: false,
+  },
+
+  /* ═══════════════════════════════════════════════════════════════
+     FOTO · cinco sesiones más
+
+     Textos del documento del cliente —TEXTOS PARA PROYECTOS DE FOTO—
+     desarrollados a partir de sus notas. Los pies están escritos
+     viendo cada toma.
+
+     Las cuadrículas van en 2:3 y no en cuadrado: estas sesiones son
+     casi todas verticales y el cuadrado les cortaba el encuadre, que
+     en fotografía es el trabajo mismo.
+     ═══════════════════════════════════════════════════════════════ */
+  {
+    slug: "sergio-pina-concierto",
+    titulo: "Concierto privado",
+    cliente: "Sergio Piña",
+    clienteId: "20_SERGIO_PINA",
+    categoria: "Evento · Música",
+    portada: "/trabajo/sergio-pina-concierto/portada.jpg",
+    tarjeta: "/trabajo/sergio-pina-concierto/tarjeta.jpg",
+    tarjetaHover: "/trabajo/sergio-pina-concierto/tarjeta-hover.jpg",
+    rubro: "foto",
+    formato: "estatico",
+    anio: 2025,
+    resumen: "Acompañamos a Sergio Piña a documentar un evento privado para su gran amigo Víctor.",
+    contexto: {
+      titulo: "Una fiesta que no se quedó quieta",
+      parrafos: ["La noche estuvo llena de movimiento, baile y mucha música. Había un solo escenario, así que lo abordamos desde varios lugares: la energía no vivía nada más al frente, sino en el trompetista de atrás, en las congas, en el que cantaba desde un costado.","Un evento privado se documenta una vez y no se repite. Por eso se cubre desde varios ángulos desde el principio, aunque parezca de más: no hay segunda toma de nada."],
+    },
+    descripcion: [],
+    servicios: ["fotografia"],
+    metricas: [],
+    modulos: [
+      {
+        tipo: "cuadricula",
+        proporcion: "2 / 3",
+        imagenes: [
+          { w: 1502, h: 2000, src: "/trabajo/sergio-pina-concierto/galeria/03.jpg", pie: "El grupo, antes de que subiera la fiesta" },
+          { w: 1504, h: 2000, src: "/trabajo/sergio-pina-concierto/galeria/04.jpg", pie: "La guitarra lleva el ritmo" },
+        ],
+      },
+      {
+        tipo: "completa",
+        imagen: { w: 2000, h: 1502, src: "/trabajo/sergio-pina-concierto/galeria/02.jpg", pie: "El escenario completo" },
+      },
+      {
+        tipo: "texto",
+        titulo: "Un solo escenario, varios ángulos",
+        parrafos: ["Con una sola tarima, la única forma de que las fotos no se repitieran era moverse. Cada canción se cubrió desde un lugar distinto —de frente, desde el costado, desde atrás del grupo— para que la serie contara la noche y no la misma imagen doce veces."],
+      },
+      {
+        tipo: "cuadricula",
+        proporcion: "2 / 3",
+        imagenes: [
+          { w: 1502, h: 2000, src: "/trabajo/sergio-pina-concierto/galeria/06.jpg", pie: "El bajo, desde atrás" },
+          { w: 1506, h: 2000, src: "/trabajo/sergio-pina-concierto/galeria/10.jpg", pie: "Cantando de frente" },
+        ],
+      },
+      {
+        tipo: "cuadricula",
+        proporcion: "2 / 3",
+        imagenes: [
+          { w: 1518, h: 2000, src: "/trabajo/sergio-pina-concierto/galeria/01.jpg", pie: "El grupo visto desde un costado" },
+          { w: 1319, h: 2000, src: "/trabajo/sergio-pina-concierto/galeria/12.jpg", pie: "De espaldas al público, con la banda" },
+        ],
+      },
+      {
+        tipo: "completa",
+        imagen: { w: 2000, h: 1502, src: "/trabajo/sergio-pina-concierto/galeria/08.jpg", pie: "Todos tocando a la vez" },
+      },
+      {
+        tipo: "texto",
+        titulo: "Cuando bajó del escenario",
+        parrafos: ["En cuanto Sergio se bajó de la tarima, lo importante dejó de ser la banda y pasó a ser la gente. Ahí el trabajo fue otro: no estorbar, quedarse cerca y dejar grabada la interacción, que es lo que el anfitrión va a querer ver después."],
+      },
+      {
+        tipo: "cuadricula",
+        proporcion: "2 / 3",
+        imagenes: [
+          { w: 1502, h: 2000, src: "/trabajo/sergio-pina-concierto/galeria/05.jpg", pie: "Entre los invitados" },
+          { w: 1154, h: 2000, src: "/trabajo/sergio-pina-concierto/galeria/09.jpg", pie: "Desde la pista" },
+        ],
+      },
+      {
+        tipo: "cuadricula",
+        proporcion: "2 / 3",
+        imagenes: [
+          { w: 1125, h: 2000, src: "/trabajo/sergio-pina-concierto/galeria/11.jpg", pie: "El brindis, a media canción" },
+          { w: 1845, h: 2000, src: "/trabajo/sergio-pina-concierto/galeria/07.jpg", pie: "La banda completa" },
+        ],
+      },
+    ],
+    cierre: "Documentar un evento privado es un encargo de confianza: se entra a la fiesta de alguien más. Lo que se busca no es la foto perfecta, sino que el que la organizó pueda volver a vivirla.",
+    colaboradores: [{ nombre: "Elihu Arrieta", rol: "Fotografía", url: "https://www.instagram.com/eci.estudio/" }],
+    destacado: false,
+    orden: 13,
+    media: { tipo: "ninguno" },
+    galeria: 0,
+    demo: false,
+  },
+
+  {
+    slug: "la-trinchera-activacion",
+    titulo: "Activación de marca",
+    cliente: "La Trinchera",
+    clienteId: "22_ACTIVACIONES_RESTAURANTES",
+    categoria: "Evento · Restaurante",
+    portada: "/trabajo/la-trinchera-activacion/portada.jpg",
+    tarjeta: "/trabajo/la-trinchera-activacion/tarjeta.jpg",
+    tarjetaHover: "/trabajo/la-trinchera-activacion/tarjeta-hover.jpg",
+    rubro: "foto",
+    formato: "estatico",
+    anio: 2025,
+    resumen: "Documentación de la activación de marca del restaurante La Trinchera, con invitados de la Secretaría de Cultura y de España.",
+    contexto: {
+      titulo: "Dos escenarios a la vez",
+      parrafos: ["La activación contó con distintas actividades en las que participaron figuras públicas de la Secretaría de Cultura y algunos invitados especiales llegados de España.","En una activación pesa igual lo que pasa en el ruedo que lo que pasa en las mesas: una cosa es el espectáculo y la otra es la gente que la marca quiere que vuelva. Se cubrieron las dos."],
+    },
+    descripcion: [],
+    servicios: ["fotografia"],
+    metricas: [],
+    modulos: [
+      {
+        tipo: "completa",
+        imagen: { w: 2000, h: 1502, src: "/trabajo/la-trinchera-activacion/galeria/03.jpg", pie: "El ruedo, con los invitados alrededor" },
+      },
+      {
+        tipo: "cuadricula",
+        proporcion: "2 / 3",
+        imagenes: [
+          { w: 1501, h: 2000, src: "/trabajo/la-trinchera-activacion/galeria/01.jpg", pie: "El charro, antes de empezar" },
+          { w: 1502, h: 2000, src: "/trabajo/la-trinchera-activacion/galeria/02.jpg", pie: "Presentando la suerte" },
+        ],
+      },
+      {
+        tipo: "texto",
+        titulo: "Lo que pasa en las mesas",
+        parrafos: ["La otra mitad del evento ocurrió bajo techo, entre la comida y la sobremesa. Ahí no hay espectáculo que seguir: hay que esperar el momento en que la mesa se olvida de la cámara."],
+      },
+      {
+        tipo: "completa",
+        alto: "cuadro",
+        imagen: { w: 2000, h: 1502, src: "/trabajo/la-trinchera-activacion/galeria/04.jpg", pie: "La sobremesa" },
+      },
+    ],
+    destacado: false,
+    orden: 14,
+    media: { tipo: "ninguno" },
+    galeria: 0,
+    demo: false,
+  },
+
+  {
+    slug: "guachimontones-equinoccio",
+    titulo: "Equinoccio",
+    cliente: "Guachimontones",
+    clienteId: "23_TEUCHITLAN",
+    categoria: "Evento · Cultural",
+    portada: "/trabajo/guachimontones-equinoccio/portada.jpg",
+    tarjeta: "/trabajo/guachimontones-equinoccio/tarjeta.jpg",
+    tarjetaHover: "/trabajo/guachimontones-equinoccio/tarjeta-hover.jpg",
+    rubro: "foto",
+    formato: "estatico",
+    anio: 2025,
+    resumen: "Documentación del equinoccio en Guachimontones y de «Ehécatl», la pieza de danza prehispánica del programa.",
+    contexto: {
+      titulo: "Ehécatl",
+      parrafos: ["Como parte del programa del festival se documentó «Ehécatl», una experiencia sensorial de danza prehispánica que evoca las raíces ancestrales del sitio.","El propósito del equinoccio en Guachimontones es revalorar el patrimonio cultural conectando el pasado con el presente. La pieza lo hace con el cuerpo: el copal, el caracol y el penacho no son vestuario, son el argumento."],
+    },
+    descripcion: [],
+    servicios: ["fotografia"],
+    metricas: [],
+    modulos: [
+      {
+        tipo: "cuadricula",
+        proporcion: "2 / 3",
+        imagenes: [
+          { w: 1502, h: 2000, src: "/trabajo/guachimontones-equinoccio/galeria/01.jpg", pie: "El copal abre la danza" },
+          { w: 1502, h: 2000, src: "/trabajo/guachimontones-equinoccio/galeria/03.jpg", pie: "El caracol, hacia los cuatro rumbos" },
+        ],
+      },
+      {
+        tipo: "completa",
+        imagen: { w: 2000, h: 1502, src: "/trabajo/guachimontones-equinoccio/galeria/02.jpg", pie: "El humo sobre el círculo" },
+      },
+      {
+        tipo: "texto",
+        titulo: "Fotografiar una danza",
+        parrafos: ["Una danza ceremonial no se repite para la cámara y no admite que alguien se meta al círculo. Se trabajó desde fuera y con la luz que había —contra el sol de mediodía, que es la peor y la única—, buscando los momentos en que el penacho se abría completo."],
+        imagen: { w: 1502, h: 2000, src: "/trabajo/guachimontones-equinoccio/galeria/04.jpg", pie: "En formación" },
+      },
+      {
+        tipo: "cuadricula",
+        proporcion: "2 / 3",
+        imagenes: [
+          { w: 1559, h: 2000, src: "/trabajo/guachimontones-equinoccio/galeria/05.jpg", pie: "El gusto de estar ahí" },
+          { w: 1449, h: 2000, src: "/trabajo/guachimontones-equinoccio/galeria/06.jpg", pie: "El cierre de la pieza" },
+        ],
+      },
+    ],
+    destacado: false,
+    orden: 15,
+    media: { tipo: "ninguno" },
+    galeria: 0,
+    demo: false,
+  },
+
+  {
+    slug: "cumpleanos-privado",
+    titulo: "Cumpleaños en familia",
+    cliente: "Evento privado",
+    clienteId: "24_CUMPLE_HERMANO_KEVIN",
+    categoria: "Evento · Cumpleaños",
+    portada: "/trabajo/cumpleanos-privado/portada.jpg",
+    tarjeta: "/trabajo/cumpleanos-privado/tarjeta.jpg",
+    tarjetaHover: "/trabajo/cumpleanos-privado/tarjeta-hover.jpg",
+    rubro: "foto",
+    formato: "estatico",
+    anio: 2025,
+    resumen: "Documentación de un cumpleaños en un salón de eventos familiar.",
+    contexto: {
+      titulo: "El que cumple años nunca ve la fiesta completa",
+      parrafos: ["En un cumpleaños, el festejado está en el centro y por eso se pierde casi todo: quién llegó, qué pasó en la mesa de al lado, cómo quedó el salón antes de que entrara nadie. Documentarlo es traerle de vuelta lo que no alcanzó a ver.","Buena parte de la tarde la ocuparon los talleres —gorras y alcancías para pintar—, así que ahí estuvo la cámara: son las mesas donde los niños se quedan quietos el tiempo suficiente para que haya foto."],
+    },
+    descripcion: [],
+    servicios: ["fotografia"],
+    metricas: [],
+    modulos: [
+      {
+        tipo: "cuadricula",
+        proporcion: "2 / 3",
+        imagenes: [
+          { w: 1502, h: 2000, src: "/trabajo/cumpleanos-privado/galeria/02.jpg", pie: "Pintando gorras" },
+          { w: 1501, h: 2000, src: "/trabajo/cumpleanos-privado/galeria/04.jpg", pie: "La alcancía, a media obra" },
+        ],
+      },
+      {
+        tipo: "completa",
+        imagen: { w: 2000, h: 1502, src: "/trabajo/cumpleanos-privado/galeria/05.jpg", pie: "El salón, a media fiesta" },
+      },
+      {
+        tipo: "texto",
+        titulo: "Sin dirigir a nadie",
+        parrafos: ["En una fiesta de niños no se posa ni se acomoda: se espera. La cámara se queda en un lugar el tiempo suficiente para que dejen de notarla, y ahí empieza lo que vale la pena fotografiar."],
+      },
+      {
+        tipo: "cuadricula",
+        proporcion: "2 / 3",
+        imagenes: [
+          { w: 1502, h: 2000, src: "/trabajo/cumpleanos-privado/galeria/01.jpg", pie: "Eligiendo el color" },
+          { w: 1502, h: 2000, src: "/trabajo/cumpleanos-privado/galeria/03.jpg", pie: "La mesa de manualidades" },
+        ],
+      },
+      {
+        tipo: "completa",
+        imagen: { w: 2000, h: 1502, src: "/trabajo/cumpleanos-privado/galeria/06.jpg", pie: "Todos a la vez" },
+      },
+    ],
+    destacado: false,
+    orden: 16,
+    media: { tipo: "ninguno" },
+    galeria: 0,
+    demo: false,
+  },
+
+  {
+    slug: "ale-mendoza-beauty-studio",
+    titulo: "El detalle, de cerca",
+    cliente: "Ale Mendoza Beauty Studio",
+    clienteId: "25_ALENAILS",
+    categoria: "Estética · Belleza",
+    portada: "/trabajo/ale-mendoza-beauty-studio/portada.jpg",
+    tarjeta: "/trabajo/ale-mendoza-beauty-studio/tarjeta.jpg",
+    tarjetaHover: "/trabajo/ale-mendoza-beauty-studio/tarjeta-hover.jpg",
+    rubro: "foto",
+    formato: "estatico",
+    anio: 2025,
+    resumen: "Sesión en el estudio para mostrar el cuidado que ponen en cada servicio, con el salón trabajando de por medio.",
+    contexto: {
+      titulo: "Un salón que no cerró para la foto",
+      parrafos: ["Ale Mendoza Beauty Studio es un salón de belleza en El Salto, Jalisco, con servicios de uñas, pestañas, masajes y varios más.","El reto fue captar el detalle y la forma en que trabajan mientras las chicas seguían trabajando y sin incomodar a las clientas. No se montó nada: nos movimos con la luz natural que el estudio ya tiene y con el equipo mínimo, para no ocupar el espacio de nadie."],
+    },
+    descripcion: [],
+    servicios: ["fotografia"],
+    metricas: [],
+    modulos: [
+      {
+        tipo: "cuadricula",
+        proporcion: "2 / 3",
+        imagenes: [
+          { w: 1333, h: 2000, src: "/trabajo/ale-mendoza-beauty-studio/galeria/01.jpg", pie: "En la mesa de uñas" },
+          { w: 1333, h: 2000, src: "/trabajo/ale-mendoza-beauty-studio/galeria/02.jpg", pie: "El pulso, de cerca" },
+        ],
+      },
+      {
+        tipo: "completa",
+        imagen: { w: 2000, h: 1329, src: "/trabajo/ale-mendoza-beauty-studio/galeria/03.jpg", pie: "Las manos, terminadas" },
+      },
+      {
+        tipo: "texto",
+        titulo: "El detalle, sin interrumpir",
+        parrafos: ["Casi todo el trabajo del salón pasa en unos pocos centímetros: la punta de un pincel, el borde de una uña, una pestaña a la vez. Para eso hay que acercarse mucho, y acercarse mucho es justo lo que incomoda a una clienta a medio servicio.","La salida fue quedarse quieto y esperar el turno de cada paso, en vez de pedir que lo repitieran. Las fotos salieron del trabajo real, no de una demostración."],
+      },
+      {
+        tipo: "cuadricula",
+        proporcion: "2 / 3",
+        imagenes: [
+          { w: 1333, h: 2000, src: "/trabajo/ale-mendoza-beauty-studio/galeria/05.jpg", pie: "Extensión de pestañas" },
+          { w: 1352, h: 2000, src: "/trabajo/ale-mendoza-beauty-studio/galeria/06.jpg", pie: "Separando, una por una" },
+        ],
+      },
+      {
+        tipo: "cuadricula",
+        proporcion: "2 / 3",
+        imagenes: [
+          { w: 1333, h: 2000, src: "/trabajo/ale-mendoza-beauty-studio/galeria/07.jpg", pie: "El acabado de la mirada" },
+          { w: 1333, h: 2000, src: "/trabajo/ale-mendoza-beauty-studio/galeria/10.jpg", pie: "Uñas largas, a contraluz" },
+        ],
+      },
+      {
+        tipo: "cuadricula",
+        proporcion: "2 / 3",
+        imagenes: [
+          { w: 1333, h: 2000, src: "/trabajo/ale-mendoza-beauty-studio/galeria/08.jpg", pie: "Limando" },
+          { w: 1333, h: 2000, src: "/trabajo/ale-mendoza-beauty-studio/galeria/11.jpg", pie: "El esmalte, capa por capa" },
+        ],
+      },
+      {
+        tipo: "texto",
+        titulo: "La luz que ya estaba",
+        parrafos: ["El estudio tiene ventanas grandes y una luz suave que le sienta bien a la piel. Meterle flash habría hecho ver todo más duro y más ajeno al lugar, así que se trabajó con lo que había y se abrió el diafragma."],
+      },
+      {
+        tipo: "cuadricula",
+        proporcion: "2 / 3",
+        imagenes: [
+          { w: 1333, h: 2000, src: "/trabajo/ale-mendoza-beauty-studio/galeria/04.jpg", pie: "Dos servicios a la vez" },
+          { w: 1333, h: 2000, src: "/trabajo/ale-mendoza-beauty-studio/galeria/09.jpg", pie: "El estudio, de fondo" },
+        ],
+      },
+      {
+        tipo: "cuadricula",
+        proporcion: "2 / 3",
+        imagenes: [
+          { w: 1333, h: 2000, src: "/trabajo/ale-mendoza-beauty-studio/galeria/12.jpg", pie: "El resultado" },
+          { w: 1333, h: 2000, src: "/trabajo/ale-mendoza-beauty-studio/galeria/13.jpg", pie: "Antes de irse" },
+        ],
+      },
+      {
+        tipo: "cuadricula",
+        proporcion: "2 / 3",
+        imagenes: [
+          { w: 1333, h: 2000, src: "/trabajo/ale-mendoza-beauty-studio/galeria/14.jpg", pie: "Los últimos retoques" },
+          { w: 1333, h: 2000, src: "/trabajo/ale-mendoza-beauty-studio/galeria/15.jpg", pie: "La mimosa de la casa" },
+        ],
+      },
+    ],
+    cierre: "Una sesión así se resuelve en medio día y le deja al salón contenido para meses. Es de los trabajos donde el valor no está en producir mucho, sino en estorbar poco.",
+    destacado: false,
+    orden: 17,
     media: { tipo: "ninguno" },
     galeria: 0,
     demo: false,

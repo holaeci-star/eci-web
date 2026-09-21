@@ -270,7 +270,7 @@ export default function ModulosCaso({ modulos }: { modulos: Modulo[] }) {
                     <figure key={j}>
                       <Recorte
                         imagen={img}
-                        proporcion="1 / 1"
+                        proporcion={m.proporcion ?? "1 / 1"}
                         etiqueta="cuadrada"
                         variante={j === 1 ? 2 : 1}
                         onAbrir={() => setAbierta(idx)}
