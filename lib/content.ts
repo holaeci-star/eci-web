@@ -1616,7 +1616,7 @@ export const PIEZAS: Pieza[] = [
         tipo: "cuadricula",
         proporcion: "2 / 3",
         imagenes: [
-          { w: 1502, h: 2000, src: "/trabajo/sergio-pina-concierto/galeria/03.jpg", pie: "El grupo, antes de que subiera la fiesta" },
+          { w: 1502, h: 2000, src: "/trabajo/sergio-pina-concierto/galeria/03.jpg", pie: "El bajo, desde atrás" },
           { w: 1504, h: 2000, src: "/trabajo/sergio-pina-concierto/galeria/04.jpg", pie: "La guitarra lleva el ritmo" },
         ],
       },
@@ -1628,26 +1628,23 @@ export const PIEZAS: Pieza[] = [
         tipo: "texto",
         titulo: "Un solo escenario, varios ángulos",
         parrafos: ["Con una sola tarima, la única forma de que las fotos no se repitieran era moverse. Cada canción se cubrió desde un lugar distinto —de frente, desde el costado, desde atrás del grupo— para que la serie contara la noche y no la misma imagen doce veces."],
+        imagen: { w: 1845, h: 2000, src: "/trabajo/sergio-pina-concierto/galeria/08.jpg", pie: "La banda completa" },
       },
       {
         tipo: "cuadricula",
         proporcion: "2 / 3",
         imagenes: [
-          { w: 1502, h: 2000, src: "/trabajo/sergio-pina-concierto/galeria/06.jpg", pie: "El bajo, desde atrás" },
-          { w: 1506, h: 2000, src: "/trabajo/sergio-pina-concierto/galeria/10.jpg", pie: "Cantando de frente" },
-        ],
-      },
-      {
-        tipo: "cuadricula",
-        proporcion: "2 / 3",
-        imagenes: [
-          { w: 1518, h: 2000, src: "/trabajo/sergio-pina-concierto/galeria/01.jpg", pie: "El grupo visto desde un costado" },
+          { w: 1518, h: 2000, src: "/trabajo/sergio-pina-concierto/galeria/01.jpg", pie: "El grupo, visto de costado" },
           { w: 1319, h: 2000, src: "/trabajo/sergio-pina-concierto/galeria/12.jpg", pie: "De espaldas al público, con la banda" },
         ],
       },
       {
-        tipo: "completa",
-        imagen: { w: 2000, h: 1502, src: "/trabajo/sergio-pina-concierto/galeria/08.jpg", pie: "Todos tocando a la vez" },
+        tipo: "cuadricula",
+        proporcion: "2 / 3",
+        imagenes: [
+          { w: 1502, h: 2000, src: "/trabajo/sergio-pina-concierto/galeria/07.jpg", pie: "El brindis, a media canción" },
+          { w: 1506, h: 2000, src: "/trabajo/sergio-pina-concierto/galeria/10.jpg", pie: "Cantando de frente" },
+        ],
       },
       {
         tipo: "texto",
@@ -1658,16 +1655,16 @@ export const PIEZAS: Pieza[] = [
         tipo: "cuadricula",
         proporcion: "2 / 3",
         imagenes: [
-          { w: 1502, h: 2000, src: "/trabajo/sergio-pina-concierto/galeria/05.jpg", pie: "Entre los invitados" },
-          { w: 1154, h: 2000, src: "/trabajo/sergio-pina-concierto/galeria/09.jpg", pie: "Desde la pista" },
+          { w: 1502, h: 2000, src: "/trabajo/sergio-pina-concierto/galeria/05.jpg", pie: "Fuera de la tarima, entre los invitados" },
+          { w: 1502, h: 2000, src: "/trabajo/sergio-pina-concierto/galeria/06.jpg", pie: "El abrazo, a media canción" },
         ],
       },
       {
         tipo: "cuadricula",
         proporcion: "2 / 3",
         imagenes: [
-          { w: 1125, h: 2000, src: "/trabajo/sergio-pina-concierto/galeria/11.jpg", pie: "El brindis, a media canción" },
-          { w: 1845, h: 2000, src: "/trabajo/sergio-pina-concierto/galeria/07.jpg", pie: "La banda completa" },
+          { w: 1154, h: 2000, src: "/trabajo/sergio-pina-concierto/galeria/09.jpg", pie: "Desde la pista" },
+          { w: 1125, h: 2000, src: "/trabajo/sergio-pina-concierto/galeria/11.jpg", pie: "El contrabajo, al fondo" },
         ],
       },
     ],
